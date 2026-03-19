@@ -26,6 +26,7 @@
         <module>stock-service</module>
         <module>payment-service</module>
         <module>bank-service</module>
+        <module>common</module>
     </modules>
     <scm>
         <connection/>
