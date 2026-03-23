@@ -1,7 +1,7 @@
 package choreograpyhsaga.stock.controller;
 
 
-import choreograpyhsaga.stock.dto.DecreaseStockRequest;
+import choreographysaga.common.dto.DecreaseStockRequest;
 import choreograpyhsaga.stock.service.StockService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

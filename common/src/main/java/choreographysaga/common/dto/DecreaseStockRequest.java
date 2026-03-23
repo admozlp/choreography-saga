@@ -1,4 +1,4 @@
-package choreograpyhsaga.stock.dto;
+package choreographysaga.common.dto;
 
 import jakarta.validation.constraints.NotNull;
 

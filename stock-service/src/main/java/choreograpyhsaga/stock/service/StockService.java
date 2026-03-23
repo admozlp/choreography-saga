@@ -1,7 +1,7 @@
 package choreograpyhsaga.stock.service;
 
 
-import choreograpyhsaga.stock.dto.DecreaseStockRequest;
+import choreographysaga.common.dto.DecreaseStockRequest;
 import choreograpyhsaga.stock.exception.OperationException;
 import choreograpyhsaga.stock.model.Stock;
 import choreograpyhsaga.stock.repository.StockRepository;
