@@ -12,6 +12,23 @@ spring:
       ddl-auto: none
     properties:
       jakarta.persistence.lock.timeout: 3000
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+        group:
+          enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      stock-service:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        record-exceptions:
+          - java.lang.Exception
 
 server:
   port: 2524

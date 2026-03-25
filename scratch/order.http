@@ -3,6 +3,6 @@ POST http://localhost:2524/orders
 Content-Type: application/json
 
 {
-  "productId": 1,
+  "productId": 10,
   "quantity": 2
 }

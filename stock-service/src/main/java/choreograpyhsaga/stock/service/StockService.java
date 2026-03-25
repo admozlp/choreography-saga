@@ -5,6 +5,7 @@ import choreographysaga.common.dto.DecreaseStockRequest;
 import choreograpyhsaga.stock.exception.OperationException;
 import choreograpyhsaga.stock.model.Stock;
 import choreograpyhsaga.stock.repository.StockRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.LockTimeoutException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ public class StockService {
     public void decreaseStock(DecreaseStockRequest request) {
         log.info("Decreasing stock for productId: {} with quantity: {}", request.productId(), request.quantity());
         Stock stock = repository.findByProductId(request.productId())
-                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + request.productId()));
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + request.productId()));
 
         if (stock.getQuantity() < request.quantity()) {
             throw new OperationException("Insufficient stock for productId: " + request.productId(), HttpStatus.CONFLICT);
