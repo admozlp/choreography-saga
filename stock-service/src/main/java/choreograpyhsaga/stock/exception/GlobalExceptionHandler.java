@@ -1,6 +1,7 @@
 package choreograpyhsaga.stock.exception;
 
 import choreographysaga.common.dto.ApiResponse;
+import choreographysaga.common.exception.OperationException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.LockTimeoutException;
 import lombok.extern.slf4j.Slf4j;

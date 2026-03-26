@@ -1,6 +1,7 @@
 package choreograpyhsaga.stock.controller;
 
 
+import choreographysaga.common.dto.ApiResponse;
 import choreographysaga.common.dto.DecreaseStockRequest;
 import choreograpyhsaga.stock.service.StockService;
 import jakarta.validation.Valid;
@@ -17,7 +18,8 @@ public class StockController {
     private final StockService service;
 
     @PutMapping
-    public void decreaseStock(@RequestBody @Valid DecreaseStockRequest request) {
+    public ApiResponse<Void> decreaseStock(@RequestBody @Valid DecreaseStockRequest request) {
         service.decreaseStock(request);
+        return ApiResponse.success();
     }
 }

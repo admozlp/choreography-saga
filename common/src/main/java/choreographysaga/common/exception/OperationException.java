@@ -1,4 +1,4 @@
-package choreograpyhsaga.stock.exception;
+package choreographysaga.common.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

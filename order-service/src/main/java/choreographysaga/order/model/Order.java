@@ -30,6 +30,7 @@ public class Order {
     public enum OrderStatus {
         CREATED,
         CONFIRMED,
+        STOCK_INSUFFICIENT,
         PAYMENT_FAILED,
         CANCELLED
     }

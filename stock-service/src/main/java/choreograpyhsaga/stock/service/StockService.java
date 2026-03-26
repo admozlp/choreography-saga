@@ -2,7 +2,7 @@ package choreograpyhsaga.stock.service;
 
 
 import choreographysaga.common.dto.DecreaseStockRequest;
-import choreograpyhsaga.stock.exception.OperationException;
+import choreographysaga.common.exception.OperationException;
 import choreograpyhsaga.stock.model.Stock;
 import choreograpyhsaga.stock.repository.StockRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -50,6 +50,15 @@ public class StockService {
 
         stock.setQuantity(stock.getQuantity() - request.quantity());
         repository.save(stock);
+
+
+        double percent = Math.random() * 100;
+        if (percent <= 20) {
+            int[] simulatedCodes = {400, 404, 409, 422, 500, 502, 503, 504};
+            int httpStatusCode = simulatedCodes[(int) (Math.random() * simulatedCodes.length)];
+            throw new OperationException("Simulated error with status code: " + httpStatusCode, HttpStatus.valueOf(httpStatusCode));
+        }
+
         log.info("Stock decreased for productId: {} with quantity: {}", request.productId(), request.quantity());
     }
 }

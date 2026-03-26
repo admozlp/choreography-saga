@@ -3,7 +3,7 @@ package choreographysaga.order.client.errordecoder;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 
-public class StockServiceErrorDecoder implements ErrorDecoder {
+public class ClientErrorDecoder implements ErrorDecoder {
     private final ErrorDecoder defaultDecoder = new Default();
 
     @Override
@@ -11,7 +11,7 @@ public class StockServiceErrorDecoder implements ErrorDecoder {
         return switch (response.status()) {
             case 500, 502, 503, 504 -> new feign.RetryableException(
                     response.status(),
-                    "Stock service error. Status: " + response.status(),
+                    "Client error. Status: " + response.status(),
                     response.request().httpMethod(),
                     (Long) null,
                     response.request()

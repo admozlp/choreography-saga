@@ -12,23 +12,27 @@ spring:
       ddl-auto: none
     properties:
       jakarta.persistence.lock.timeout: 3000
-  cloud:
-    openfeign:
-      circuitbreaker:
-        enabled: true
-        group:
-          enabled: true
 
 resilience4j:
   circuitbreaker:
     instances:
-      stock-service:
+      stockService:
         slidingWindowSize: 10
         minimumNumberOfCalls: 5
         failureRateThreshold: 50
         waitDurationInOpenState: 10000
         record-exceptions:
           - java.lang.Exception
+  retry:
+    instances:
+      stockService:
+        max-attempts: 3
+        wait-duration: 1000
+        retry-exceptions:
+          - feign.RetryableException
+        ignore-exceptions:
+          - jakarta.persistence.EntityNotFoundException
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException
 
 server:
   port: 2524
