@@ -15,12 +15,12 @@ public class StockService {
 
     @CircuitBreaker(name = "stockService", fallbackMethod = "decreaseStockFallback")
     @Retry(name = "stockService")
-    public void decreaseStock(DecreaseStockRequest request) {
+    public void decreaseStock(DecreaseStockRequest request, Long orderId) {
         stockClient.decreaseStock(request);
     }
 
-    public void decreaseStockFallback(DecreaseStockRequest request, Exception e) {
-        log.error("Stock service fallback triggered. Cause: {}", e.getMessage());
+    public void decreaseStockFallback(DecreaseStockRequest request, Long orderId, Exception e) {
+        log.error("Stock service fallback triggered. orderId: {} Cause: {}", orderId, e.getMessage());
         if (e instanceof RuntimeException runtimeException) {
             throw runtimeException;
         }

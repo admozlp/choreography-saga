@@ -24,7 +24,7 @@ public class OrderService {
         Order order = repository.save(OrderConverter.toEntity(request));
 
         try {
-            stockService.decreaseStock(new DecreaseStockRequest(request.productId(), request.quantity()));
+            stockService.decreaseStock(new DecreaseStockRequest(request.productId(), request.quantity()), order.getId());
         } catch (Exception e) {
             log.error("Stock service failed, updating order status: {}", order.getId());
             order.setStatus(Order.OrderStatus.STOCK_INSUFFICIENT);
