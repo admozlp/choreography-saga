@@ -6,14 +6,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
-    <groupId>adem</groupId>
-    <artifactId>choreography-saga</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>choreographysaga</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0.1</version>
     <packaging>pom</packaging>
-    <name>choreography-saga</name>
-    <description>choreography-saga</description>
+    <name>choreography-parent</name>
     <url/>
     <licenses>
         <license/>

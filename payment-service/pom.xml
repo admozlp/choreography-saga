@@ -4,12 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>adem</groupId>
-        <artifactId>choreography-saga</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>choreographysaga</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>payment-service</artifactId>
+    <version>1.0.1</version>
 
     <dependencies>
         <dependency>
@@ -58,9 +59,9 @@
 
         <!-- Common -->
         <dependency>
-            <groupId>adem</groupId>
+            <groupId>choreographysaga</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.1</version>
         </dependency>
     </dependencies>
 
