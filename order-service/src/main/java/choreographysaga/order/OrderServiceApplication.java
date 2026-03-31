@@ -9,10 +9,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 public class OrderServiceApplication {
     // TODO
-    // order service
-    // stock service
-    // payment service
-    // bank service
+    // frontend html i alacak
+    // frontendden payment servisteki callback api alacak.
+    // payment servis eventları başlatacak
     public static void main(String[] args) {
         SpringApplication.run(OrderServiceApplication.class, args);
     }

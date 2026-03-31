@@ -3,9 +3,11 @@ package choreographysaga.bank.service;
 import choreographysaga.common.dto.BankResponse;
 import choreographysaga.common.dto.StartPaymentRequest;
 import choreographysaga.common.exception.OperationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class BankService {
 
@@ -15,12 +17,13 @@ public class BankService {
         BankResponse bankResponse = new BankResponse(html, request.paymentId().toString(), "a6d96d946dc505ae50cba4ec5170cda9");
 
         double percent = Math.random() * 100;
-        if (percent <= 10) {
+        if (percent <= 20) {
             int[] simulatedCodes = {400, 404, 409, 422, 500, 502, 503, 504};
             int httpStatusCode = simulatedCodes[(int) (Math.random() * simulatedCodes.length)];
+            log.error("Error bank service, httpStatusCode: {}", httpStatusCode);
             throw new OperationException("Simulated error with status code: " + httpStatusCode, HttpStatus.valueOf(httpStatusCode));
         }
-
+        log.info("Bank proccess completed, paymentId: {}", request.paymentId());
         return bankResponse;
     }
 

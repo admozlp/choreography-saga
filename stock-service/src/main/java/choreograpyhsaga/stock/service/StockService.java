@@ -56,6 +56,7 @@ public class StockService {
         if (percent <= 20) {
             int[] simulatedCodes = {400, 404, 409, 422, 500, 502, 503, 504};
             int httpStatusCode = simulatedCodes[(int) (Math.random() * simulatedCodes.length)];
+            log.error("Error in stock service, httpStatusCode: {}", httpStatusCode);
             throw new OperationException("Simulated error with status code: " + httpStatusCode, HttpStatus.valueOf(httpStatusCode));
         }
 

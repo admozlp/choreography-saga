@@ -6,14 +6,14 @@ import choreographysaga.common.dto.CreatePaymentRequest;
 import choreographysaga.order.client.config.ClientConfig;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "payment-service",
-        url = "http://localhost:3530",
+        url = "http://localhost:3530/payments",
         configuration = ClientConfig.class)
 public interface PaymentClient {
 
-    @PutMapping
+    @PostMapping
     ApiResponse<String> createPayment(@RequestBody @Valid CreatePaymentRequest request);
 }

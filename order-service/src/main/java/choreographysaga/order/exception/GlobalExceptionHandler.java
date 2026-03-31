@@ -1,6 +1,7 @@
 package choreographysaga.order.exception;
 
 import choreographysaga.common.dto.ApiResponse;
+import choreographysaga.common.exception.OperationException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleEntityNotFoundException(EntityNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.error(ex.getMessage(), HttpStatus.NOT_FOUND));
+    }
+
+    @ExceptionHandler(OperationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleOperationException(OperationException ex) {
+        return ResponseEntity.status(ex.getHttpStatus())
+                .body(ApiResponse.error(ex.getMessage(), ex.getHttpStatus()));
     }
 
 }

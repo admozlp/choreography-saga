@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @Service
 @RequiredArgsConstructor
 public class BankService {
-    private BankClient bankClient;
+    private final BankClient bankClient;
 
     @CircuitBreaker(name = "bankService", fallbackMethod = "startPaymentFallback")
     @Retry(name = "bankService")
@@ -23,11 +23,8 @@ public class BankService {
         return bankClient.startPayment(new StartPaymentRequest(paymentId, amount)).getData();
     }
 
-    public void startPaymentFallback(Long paymentId, BigDecimal amount, Exception e) {
+    public BankResponse startPaymentFallback(Long paymentId, BigDecimal amount, RuntimeException e) {
         log.error("Bank service fallback triggered. paymentId: {}, Cause: {}", paymentId, e.getMessage());
-        if (e instanceof RuntimeException runtimeException) {
-            throw runtimeException;
-        }
-        throw new RuntimeException(e);
+        throw e;
     }
 }

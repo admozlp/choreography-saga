@@ -16,7 +16,7 @@ spring:
 resilience4j:
   circuitbreaker:
     instances:
-      stockService:
+      client:
         slidingWindowSize: 10
         minimumNumberOfCalls: 5
         failureRateThreshold: 50
@@ -25,7 +25,7 @@ resilience4j:
           - java.lang.Exception
   retry:
     instances:
-      stockService:
+      client:
         max-attempts: 3
         wait-duration: 1000
         retry-exceptions:

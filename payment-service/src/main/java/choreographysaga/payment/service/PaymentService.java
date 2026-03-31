@@ -8,6 +8,7 @@ import choreographysaga.payment.converter.PaymentConverter;
 import choreographysaga.payment.model.Payment;
 import choreographysaga.payment.model.enm.PaymentStatus;
 import choreographysaga.payment.repository.PaymentRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,16 +26,17 @@ public class PaymentService {
         Payment payment = PaymentConverter.toEntity(request);
         repository.save(payment);
 
-        // TODO: bank servise gidecek hata alırsa payment ın durumunu güncelleyecek ve order a da hata dönecek
         try {
             BankResponse bankResponse = bankService.startPayment(payment.getId(), payment.getAmount());
             log.info("Bank request successfull, paymentId: {}", bankResponse.paymentId());
             return bankResponse.html();
-        } catch (Exception e) {
-            log.error("Bank request error, paymentId: {}", payment.getId());
+        } catch (RuntimeException e) {
             payment.setStatus(PaymentStatus.FAILED);
             repository.save(payment);
-            throw new OperationException("Bank Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            HttpStatus status = (e instanceof FeignException fe && fe.status() > 0) ? HttpStatus.valueOf(fe.status()) : HttpStatus.INTERNAL_SERVER_ERROR;
+
+            log.error("Bank request error, paymentId: {}, httpStatusCode: {}", payment.getId(), status.value());
+            throw new OperationException("Bank Error. Couldn't start payment", status);
         }
     }
 }

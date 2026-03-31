@@ -18,5 +18,4 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface BankClient {
     @PostMapping
     ApiResponse<BankResponse> startPayment(@RequestBody @Valid StartPaymentRequest request);
-
 }

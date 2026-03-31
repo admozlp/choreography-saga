@@ -13,17 +13,14 @@ import org.springframework.stereotype.Service;
 public class StockService {
     private final StockClient stockClient;
 
-    @CircuitBreaker(name = "stockService", fallbackMethod = "decreaseStockFallback")
-    @Retry(name = "stockService")
+    @CircuitBreaker(name = "client", fallbackMethod = "decreaseStockFallback")
+    @Retry(name = "client")
     public void decreaseStock(DecreaseStockRequest request, Long orderId) {
         stockClient.decreaseStock(request);
     }
 
-    public void decreaseStockFallback(DecreaseStockRequest request, Long orderId, Exception e) {
+    public void decreaseStockFallback(DecreaseStockRequest request, Long orderId, RuntimeException e) {
         log.error("Stock service fallback triggered. orderId: {} Cause: {}", orderId, e.getMessage());
-        if (e instanceof RuntimeException runtimeException) {
-            throw runtimeException;
-        }
-        throw new RuntimeException(e);
+        throw e;
     }
 }
