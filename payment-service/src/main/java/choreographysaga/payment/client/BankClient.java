@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @FeignClient(
-        name = "stock-service",
+        name = "bank-service",
         url = "http://localhost:2530/bank",
         configuration = ClientConfig.class
 )

@@ -11,6 +11,7 @@ public class OrderConverter {
         return Order.builder()
                 .productId(request.productId())
                 .quantity(request.quantity())
+                .status(Order.OrderStatus.STOCK_WILL_BE_RESERVED)
                 .build();
     }
 }

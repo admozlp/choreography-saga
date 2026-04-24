@@ -22,16 +22,12 @@ public class Order {
     private Integer quantity;
 
     @Column(name = "status", nullable = false)
-    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.CREATED;
+    private OrderStatus status;
 
 
     public enum OrderStatus {
-        CREATED,
-        CONFIRMED,
-        STOCK_INSUFFICIENT,
-        PAYMENT_FAILED,
-        CANCELLED
+        STOCK_WILL_BE_RESERVED,
+        WAITING_FOR_PAYMENT
     }
 }

@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class StockClientFallbackFactory implements FallbackFactory<StockClient> {
+public class StockClientFallbackFactory implements FallbackFactory<ReserveStockClient> {
 
     @Override
-    public StockClient create(Throwable cause) {
+    public ReserveStockClient create(Throwable cause) {
         return request -> {
             log.error("Stock service fallback triggered. Cause: {}", cause.getMessage());
             throw (RuntimeException) cause;

@@ -4,6 +4,8 @@ import choreograpyhsaga.stock.model.Stock;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -17,4 +19,12 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Stock> findByProductId(long l);
+
+    @Query(value = """
+             select s.quantity - coalesce(sum(rs.quantity), 0) from stocks s
+             left join reserve_stocks rs on (rs.stock_id = s.id and rs.status = 'RESERVED' and rs.expires_at > now())
+             where s.id = :id
+             group by s.id, s.quantity
+            """, nativeQuery = true)
+    Integer findActiveQuantity(@Param("id") Long id);
 }

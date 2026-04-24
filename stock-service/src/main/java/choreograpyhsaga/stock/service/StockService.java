@@ -1,7 +1,6 @@
 package choreograpyhsaga.stock.service;
 
 
-import choreographysaga.common.dto.DecreaseStockRequest;
 import choreographysaga.common.exception.OperationException;
 import choreograpyhsaga.stock.model.Stock;
 import choreograpyhsaga.stock.repository.StockRepository;
@@ -39,27 +38,15 @@ public class StockService {
      */
     @Retryable(value = {LockTimeoutException.class}, maxRetries = 3, delay = 200)
     @Transactional
-    public void decreaseStock(DecreaseStockRequest request) {
-        log.info("Decreasing stock for productId: {} with quantity: {}", request.productId(), request.quantity());
-        Stock stock = repository.findByProductId(request.productId())
-                .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + request.productId()));
+    public Stock findByProductIdAndQuantity(Long productId, Integer quantity) {
+        Stock stock = repository.findByProductId(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + productId));
 
-        if (stock.getQuantity() < request.quantity()) {
-            throw new OperationException("Insufficient stock for productId: " + request.productId(), HttpStatus.CONFLICT);
+        Integer activeQuantity = repository.findActiveQuantity(stock.getId());
+        if (quantity > activeQuantity) {
+            log.info("Insufficient stock, productId: {}, quantity: {} activeQuantity: {}", productId, quantity, activeQuantity);
+            throw new OperationException("Insufficient stock for productId: " + productId, HttpStatus.CONFLICT);
         }
-
-        stock.setQuantity(stock.getQuantity() - request.quantity());
-        repository.save(stock);
-
-
-        double percent = Math.random() * 100;
-        if (percent <= 20) {
-            int[] simulatedCodes = {400, 404, 409, 422, 500, 502, 503, 504};
-            int httpStatusCode = simulatedCodes[(int) (Math.random() * simulatedCodes.length)];
-            log.error("Error in stock service, httpStatusCode: {}", httpStatusCode);
-            throw new OperationException("Simulated error with status code: " + httpStatusCode, HttpStatus.valueOf(httpStatusCode));
-        }
-
-        log.info("Stock decreased for productId: {} with quantity: {}", request.productId(), request.quantity());
+        return stock;
     }
 }
