@@ -15,6 +15,7 @@ spring:
 
 resilience4j:
   circuitbreaker:
+    circuit-breaker-aspect-order: 1
     instances:
       client:
         slidingWindowSize: 10
@@ -24,6 +25,7 @@ resilience4j:
         record-exceptions:
           - java.lang.Exception
   retry:
+    retry-aspect-order: 2
     instances:
       client:
         max-attempts: 3

@@ -18,7 +18,6 @@ public class ReserveStockService {
     private final StockService stockService;
     private final ReserveStockRepository repository;
 
-
     @Transactional
     public void reserveStock(ReserveStockRequest request) {
         Stock stock = stockService.findByProductIdAndQuantity(request.productId(), request.quantity());

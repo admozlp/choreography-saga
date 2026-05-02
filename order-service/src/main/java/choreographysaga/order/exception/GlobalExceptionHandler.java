@@ -11,11 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(StockServiceException.class)
-    public ResponseEntity<ApiResponse<Void>> handleStockServiceUnavailable(StockServiceException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
-    }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleEntityNotFoundException(EntityNotFoundException ex) {
@@ -27,6 +22,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleOperationException(OperationException ex) {
         return ResponseEntity.status(ex.getHttpStatus())
                 .body(ApiResponse.error(ex.getMessage(), ex.getHttpStatus()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
 }
