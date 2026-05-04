@@ -6,3 +6,6 @@ Content-Type: application/json
   "productId": 2,
   "quantity": 1
 }
+
+### Get Quantity By Stock Id
+GET http://localhost:3532/stocks/2/quantity

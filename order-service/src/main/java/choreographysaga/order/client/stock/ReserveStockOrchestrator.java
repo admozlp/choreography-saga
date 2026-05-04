@@ -21,6 +21,7 @@ public class ReserveStockOrchestrator {
         reserveStockClientManager.reserveStock(new ReserveStockRequest(order.getProductId(), order.getQuantity(), order.getId()));
         order.setStatus(Order.OrderStatus.WAITING_FOR_PAYMENT);
         applicationEventPublisher.publishEvent(new StockReservedEvent(order.getId(), order.getProductId(), order.getQuantity()));
+        order.setQuantity(null);
         repository.save(order);
     }
 }

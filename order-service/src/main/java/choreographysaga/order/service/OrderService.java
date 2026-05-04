@@ -30,9 +30,9 @@ public class OrderService {
         repository.save(order);
         reserveStockOrchestrator.reserveStock(order);
 
-        String html = createPayment(order);
+//        String html = createPayment(order);
         log.info("Order created with ID: {}", order.getId());
-        return html;
+        return "html";
     }
 
 

@@ -9,6 +9,8 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import tools.jackson.databind.ObjectMapper;
 
+import static choreographysaga.common.event.EventTypes.STOCK_RESERVATION_COMPENSATION_EVENT;
+
 @Component
 @RequiredArgsConstructor
 public class StockCompensationListener {
@@ -17,6 +19,6 @@ public class StockCompensationListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
     public void compensateReservedStock(StockReservedEvent stockReservedEvent) {
-        outboxEventPublisher.publish(new Outbox(stockReservedEvent.orderId().toString(), "Order", "StockReservationCompensationEvent", objectMapper.writeValueAsString(stockReservedEvent)));
+        outboxEventPublisher.publish(new Outbox(stockReservedEvent.orderId().toString(), "Order", STOCK_RESERVATION_COMPENSATION_EVENT, objectMapper.writeValueAsString(stockReservedEvent)));
     }
 }

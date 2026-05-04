@@ -37,7 +37,7 @@ public class StockService {
 
      */
     @Retryable(value = {LockTimeoutException.class}, maxRetries = 3, delay = 200)
-    @Transactional
+    @Transactional(readOnly = true)
     public Stock findByProductIdAndQuantity(Long productId, Integer quantity) {
         Stock stock = repository.findByProductId(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + productId));
@@ -48,5 +48,12 @@ public class StockService {
             throw new OperationException("Insufficient stock for productId: " + productId, HttpStatus.CONFLICT);
         }
         return stock;
+    }
+
+    @Transactional(readOnly = true)
+    public Integer getQuantityById(Long stockId) {
+        Stock stock = repository.findById(stockId)
+                .orElseThrow(() -> new EntityNotFoundException("Stock not found with ID: " + stockId));
+        return repository.findActiveQuantity(stock.getId());
     }
 }

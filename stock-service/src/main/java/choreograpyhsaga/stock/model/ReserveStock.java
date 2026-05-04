@@ -5,7 +5,7 @@ import choreograpyhsaga.stock.model.enm.ReserveStockStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -27,7 +27,7 @@ public class ReserveStock {
     private ReserveStockStatus status;
 
     @Column(name = "expires_at", nullable = false)
-    private Timestamp expiresAt;
+    private Instant expiresAt;
 
     @Column(name = "order_id", nullable = false)
     private Long orderId;
