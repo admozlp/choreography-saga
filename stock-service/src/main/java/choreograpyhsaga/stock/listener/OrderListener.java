@@ -9,6 +9,7 @@ import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.retrytopic.DltStrategy;
+import org.springframework.kafka.retrytopic.TopicSuffixingStrategy;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -31,6 +32,7 @@ public class OrderListener {
             attempts = "4",
             backOff = @BackOff(delay = 1000, multiplier = 2),
             dltStrategy = DltStrategy.FAIL_ON_ERROR,
+            topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE,
             exclude = {
                     JacksonException.class,
                     IllegalArgumentException.class
