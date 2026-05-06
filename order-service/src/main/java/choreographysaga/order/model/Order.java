@@ -21,13 +21,15 @@ public class Order {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+    @Builder.Default
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.STOCK_WILL_BE_RESERVED;
 
 
     public enum OrderStatus {
         STOCK_WILL_BE_RESERVED,
-        WAITING_FOR_PAYMENT
+        STOCK_RESERVED,
+        PAYMENT_CREATED,
     }
 }
