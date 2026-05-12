@@ -29,4 +29,10 @@ public class BankController {
         return ApiResponse.success(null);
     }
 
+    @PostMapping("/handshake")
+    public ApiResponse<Void> handshake(String paymentId, String status) {
+        service.handshake(paymentId, status);
+        return ApiResponse.success(null);
+    }
+
 }

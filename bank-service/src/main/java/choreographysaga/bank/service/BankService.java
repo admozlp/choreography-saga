@@ -49,4 +49,9 @@ public class BankService {
         // if invalid, log error and throw exception
         // redirect to merchant callback url with payment status
     }
+
+    public void handshake(String paymentId, String status) {
+        log.info("Handshake received for paymentId: {}", paymentId);
+        // This method can be used to verify the connection between bank and payment service
+    }
 }

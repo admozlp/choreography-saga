@@ -35,5 +35,6 @@ public class PaymentService {
 
     public void callback(String paymentId, String status) {
         // This method will be called by the bank service after payment is processed
+        // use handshake method to verify the connection between bank and payment service
     }
 }
