@@ -17,7 +17,12 @@ public class PaymentController {
     private final PaymentService service;
 
     @PostMapping
-    ApiResponse<String> createPayment(@RequestBody @Valid CreatePaymentRequest request) {
+    public ApiResponse<String> createPayment(@RequestBody @Valid CreatePaymentRequest request) {
         return ApiResponse.success(service.createPayment(request), "Payment created successfully");
+    }
+
+    public ApiResponse<Void> callback(String paymentId, String status) {
+        service.callback(paymentId, status);
+        return ApiResponse.success(null, "Payment status updated successfully");
     }
 }

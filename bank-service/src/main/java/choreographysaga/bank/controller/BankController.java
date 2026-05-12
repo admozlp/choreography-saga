@@ -23,4 +23,10 @@ public class BankController {
         return ApiResponse.success(service.startPayment(request));
     }
 
+    @PostMapping("/confirm")
+    public ApiResponse<Void> confirmPayment(String paymentId, String optCode) {
+        service.confirmPayment(paymentId, optCode);
+        return ApiResponse.success(null);
+    }
+
 }

@@ -31,4 +31,9 @@ public class PaymentService {
         log.info("Payment started for payment ID: {}", payment.getId());
         return bankResponse.html();
     }
+
+
+    public void callback(String paymentId, String status) {
+        // This method will be called by the bank service after payment is processed
+    }
 }
