@@ -1,8 +1,10 @@
 package choreographysaga.common.dto;
 
+import java.util.UUID;
+
 public record BankResponse(
         String html,
         String paymentId,
-        String signature
+        UUID signature
 ) {
 }

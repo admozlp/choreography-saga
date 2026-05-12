@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum PaymentStatus {
+    CREATED("Created"),
     STARTED("Started"),
     COMPLETED("Completed"),
     FAILED("Failed");

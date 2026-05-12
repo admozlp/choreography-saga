@@ -1,5 +1,6 @@
-package choreographysaga.order.client.errordecoder;
+package choreographysaga.payment.client.errordecoder;
 
+import choreographysaga.common.exception.CustomFeignException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
@@ -9,9 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.io.InputStream;
 
+
 @Slf4j
 public class FeignClientErrorDecoder implements ErrorDecoder {
-    private final ErrorDecoder defaultDecoder = new Default();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -25,7 +26,7 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
                     (Long) null,
                     response.request()
             );
-            default -> new choreographysaga.common.exception.CustomFeignException(
+            default -> new CustomFeignException(
                     response.status(),
                     message,
                     null

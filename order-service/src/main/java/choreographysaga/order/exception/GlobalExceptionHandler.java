@@ -2,6 +2,7 @@ package choreographysaga.order.exception;
 
 import choreographysaga.common.dto.ApiResponse;
 import choreographysaga.common.exception.OperationException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,4 +31,9 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
+    @ExceptionHandler(CallNotPermittedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCallNotPermittedException(CallNotPermittedException e) {
+        return ResponseEntity.status(503)
+                .body(ApiResponse.error("Service unavailable, please try later", HttpStatus.SERVICE_UNAVAILABLE));
+    }
 }

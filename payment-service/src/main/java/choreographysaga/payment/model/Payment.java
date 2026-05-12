@@ -27,5 +27,5 @@ public class Payment {
 
     @Builder.Default
     @Column(nullable = false)
-    private PaymentStatus status = PaymentStatus.STARTED;
+    private PaymentStatus status = PaymentStatus.CREATED;
 }
