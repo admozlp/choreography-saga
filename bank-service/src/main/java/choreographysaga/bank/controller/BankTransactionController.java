@@ -1,7 +1,8 @@
 package choreographysaga.bank.controller;
 
 
-import choreographysaga.bank.service.BankService;
+import choreographysaga.bank.dto.ConfirmPaymentRequest;
+import choreographysaga.bank.service.BankTransactionService;
 import choreographysaga.common.dto.ApiResponse;
 import choreographysaga.common.dto.BankResponse;
 import choreographysaga.common.dto.StartPaymentRequest;
@@ -14,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/bank")
-public class BankController {
-    private final BankService service;
+@RequestMapping("/bank-transactions")
+public class BankTransactionController {
+    private final BankTransactionService service;
 
     @PostMapping
     public ApiResponse<BankResponse> startPayment(@RequestBody @Valid StartPaymentRequest request) {
@@ -24,8 +25,8 @@ public class BankController {
     }
 
     @PostMapping("/confirm")
-    public ApiResponse<Void> confirmPayment(String paymentId, String optCode) {
-        service.confirmPayment(paymentId, optCode);
+    public ApiResponse<Void> confirmPayment(@RequestBody @Valid ConfirmPaymentRequest request) {
+        service.confirmPayment(request);
         return ApiResponse.success(null);
     }
 

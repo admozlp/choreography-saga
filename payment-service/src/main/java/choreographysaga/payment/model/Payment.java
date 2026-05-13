@@ -27,5 +27,6 @@ public class Payment {
 
     @Builder.Default
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private PaymentStatus status = PaymentStatus.CREATED;
 }

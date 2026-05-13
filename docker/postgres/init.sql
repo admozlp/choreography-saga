@@ -4,3 +4,4 @@
 CREATE DATABASE saga1_order;
 CREATE DATABASE saga1_stock;
 CREATE DATABASE saga1_payment;
+CREATE DATABASE saga1_bank;

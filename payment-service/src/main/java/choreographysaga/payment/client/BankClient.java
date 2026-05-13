@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
         name = "bank-service",
-        url = "http://localhost:2530/bank",
+        url = "http://localhost:2530/bank-transactions",
         configuration = FeignClientConfig.class
 )
 public interface BankClient {
