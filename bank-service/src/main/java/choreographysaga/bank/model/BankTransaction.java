@@ -1,6 +1,6 @@
 package choreographysaga.bank.model;
 
-import choreographysaga.bank.model.enm.BankTransactionStatus;
+import choreographysaga.common.model.enm.BankTransactionStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

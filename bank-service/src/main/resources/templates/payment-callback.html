@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yönlendiriliyorsunuz...</title>
+</head>
+<body onload="document.forms[0].submit()">
+    <form action="${CALLBACK_URL}" method="POST">
+        <input type="hidden" name="paymentId" value="${PAYMENT_ID}"/>
+        <input type="hidden" name="status" value="${STATUS}"/>
+        <noscript>
+            <p>JavaScript devre dışı. Devam etmek için butona tıklayın.</p>
+            <button type="submit">Devam Et</button>
+        </noscript>
+    </form>
+    <p>Yönlendiriliyorsunuz, lütfen bekleyin...</p>
+</body>
+</html>

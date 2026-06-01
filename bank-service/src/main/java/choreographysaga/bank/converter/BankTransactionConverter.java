@@ -1,7 +1,7 @@
 package choreographysaga.bank.converter;
 
 import choreographysaga.bank.model.BankTransaction;
-import choreographysaga.bank.model.enm.BankTransactionStatus;
+import choreographysaga.common.model.enm.BankTransactionStatus;
 import choreographysaga.common.dto.StartPaymentRequest;
 
 import java.time.Instant;

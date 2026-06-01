@@ -2,13 +2,12 @@ package choreographysaga.payment.controller;
 
 import choreographysaga.common.dto.ApiResponse;
 import choreographysaga.common.dto.CreatePaymentRequest;
+import choreographysaga.common.dto.PaymentCallbackRequest;
 import choreographysaga.payment.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequestMapping("/payments")
@@ -21,8 +20,18 @@ public class PaymentController {
         return ApiResponse.success(service.createPayment(request), "Payment created successfully");
     }
 
-    public ApiResponse<Void> callback(String paymentId, String status) {
-        service.callback(paymentId, status);
-        return ApiResponse.success(null, "Payment status updated successfully");
+    @PostMapping("/callback")
+    public ModelAndView callback(@ModelAttribute @Valid PaymentCallbackRequest request) {
+        return service.callback(request);
+    }
+
+    @GetMapping("/success")
+    public String success(@ModelAttribute @Valid PaymentCallbackRequest request) {
+        return "Payment successful";
+    }
+
+    @GetMapping("/error")
+    public String erro(@ModelAttribute @Valid PaymentCallbackRequest request) {
+        return "Payment failed";
     }
 }

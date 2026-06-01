@@ -10,10 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 @SpringBootApplication
 public class OrderServiceApplication {
-    // TODO
-    // frontend html i alacak
-    // frontendden payment servisteki callback api alacak.
-    // payment servis eventları başlatacak
     public static void main(String[] args) {
         SpringApplication.run(OrderServiceApplication.class, args);
     }

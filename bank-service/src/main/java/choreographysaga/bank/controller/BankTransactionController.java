@@ -8,6 +8,8 @@ import choreographysaga.common.dto.BankResponse;
 import choreographysaga.common.dto.StartPaymentRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,10 +26,12 @@ public class BankTransactionController {
         return ApiResponse.success(service.startPayment(request));
     }
 
-    @PostMapping("/confirm")
-    public ApiResponse<Void> confirmPayment(@RequestBody @Valid ConfirmPaymentRequest request) {
-        service.confirmPayment(request);
-        return ApiResponse.success(null);
+    @PostMapping(value = "/confirm", produces = MediaType.TEXT_HTML_VALUE)
+    public ResponseEntity<String> confirmPayment(@RequestBody @Valid ConfirmPaymentRequest request) {
+        String html = service.confirmPayment(request);
+        return ResponseEntity.ok()
+                .contentType(MediaType.TEXT_HTML)
+                .body(html);
     }
 
     @PostMapping("/handshake")
