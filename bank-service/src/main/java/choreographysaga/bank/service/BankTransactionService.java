@@ -118,6 +118,10 @@ public class BankTransactionService {
         BankTransaction bankTransaction = repository.findByPaymentId(request.paymentId())
                 .orElseThrow(() -> new OperationException("Transaction not found for handshake", HttpStatus.NOT_FOUND));
 
+        if (bankTransaction.getStatus() == BankTransactionStatus.COMPLETED) {
+            return true;
+        }
+
         if (bankTransaction.getStatus() != BankTransactionStatus.CONFIRMED) {
             log.error("Handshake failed for paymentId: {}. Transaction status is not CONFIRMED. Current status: {}", request.paymentId(), bankTransaction.getStatus());
             return false;

@@ -1,7 +1,6 @@
 package choreographysaga.order.client.stock;
 
 import choreographysaga.common.dto.ReserveStockRequest;
-import choreographysaga.order.listener.event.StockReservedEvent;
 import choreographysaga.order.model.Order;
 import choreographysaga.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,7 @@ public class ReserveStockOrchestrator {
     public void reserveStock(Order order) {
         reserveStockClientManager.reserveStock(new ReserveStockRequest(order.getProductId(), order.getQuantity(), order.getId()));
         order.setStatus(Order.OrderStatus.STOCK_RESERVED);
-        applicationEventPublisher.publishEvent(new StockReservedEvent(order.getId(), order.getProductId(), order.getQuantity()));
+        applicationEventPublisher.publishEvent(new choreographysaga.common.event.StockReservationCompensationEvent(order.getId()));
         repository.save(order);
     }
 }

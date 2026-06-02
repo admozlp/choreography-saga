@@ -1,6 +1,6 @@
 package choreograpyhsaga.stock.listener;
 
-import choreograpyhsaga.stock.listener.event.StockReservationCompensationEvent;
+import choreographysaga.common.event.StockReservationCompensationEvent;
 import choreograpyhsaga.stock.service.ReserveStockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

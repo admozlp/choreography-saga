@@ -25,6 +25,7 @@ public class PaymentService {
     private final PaymentRepository repository;
     private final BankServiceManager bankServiceManager;
     private final PaymentStateManager paymentStateManager;
+    private final OutboxEventPublisher outboxEventPublisher;
 
     public String createPayment(CreatePaymentRequest request) {
         log.info("Creating payment for orderId: {} with amount: {}", request.orderId(), request.amount());

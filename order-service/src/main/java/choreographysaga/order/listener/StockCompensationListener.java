@@ -1,6 +1,5 @@
 package choreographysaga.order.listener;
 
-import choreographysaga.order.listener.event.StockReservedEvent;
 import choreographysaga.order.model.Outbox;
 import choreographysaga.order.publisher.OutboxEventPublisher;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,7 @@ public class StockCompensationListener {
     private final ObjectMapper objectMapper;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
-    public void compensateReservedStock(StockReservedEvent stockReservedEvent) {
+    public void compensateReservedStock(choreographysaga.common.event.StockReservationCompensationEvent stockReservedEvent) {
         outboxEventPublisher.publish(new Outbox(stockReservedEvent.orderId().toString(), "Order", STOCK_RESERVATION_COMPENSATION_EVENT, objectMapper.writeValueAsString(stockReservedEvent)));
     }
 }
