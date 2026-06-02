@@ -4,8 +4,9 @@ package choreographysaga.bank.controller;
 import choreographysaga.bank.dto.ConfirmPaymentRequest;
 import choreographysaga.bank.service.BankTransactionService;
 import choreographysaga.common.dto.ApiResponse;
-import choreographysaga.common.dto.BankResponse;
-import choreographysaga.common.dto.StartPaymentRequest;
+import choreographysaga.common.dto.BankHandshakeRequest;
+import choreographysaga.common.dto.BankTransactionResponse;
+import choreographysaga.common.dto.CreateBankTransactionRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -22,7 +23,7 @@ public class BankTransactionController {
     private final BankTransactionService service;
 
     @PostMapping
-    public ApiResponse<BankResponse> startPayment(@RequestBody @Valid StartPaymentRequest request) {
+    public ApiResponse<BankTransactionResponse> startPayment(@RequestBody @Valid CreateBankTransactionRequest request) {
         return ApiResponse.success(service.startPayment(request));
     }
 
@@ -35,9 +36,8 @@ public class BankTransactionController {
     }
 
     @PostMapping("/handshake")
-    public ApiResponse<Void> handshake(String paymentId, String status) {
-        service.handshake(paymentId, status);
-        return ApiResponse.success(null);
+    public ApiResponse<Boolean> handshake(@RequestBody @Valid BankHandshakeRequest request) {
+        return ApiResponse.success(service.handshake(request), "Handshake successful");
     }
 
 }

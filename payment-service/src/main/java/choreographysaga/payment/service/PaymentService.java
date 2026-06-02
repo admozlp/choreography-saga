@@ -1,6 +1,6 @@
 package choreographysaga.payment.service;
 
-import choreographysaga.common.dto.BankResponse;
+import choreographysaga.common.dto.BankTransactionResponse;
 import choreographysaga.common.dto.CreatePaymentRequest;
 import choreographysaga.common.dto.PaymentCallbackRequest;
 import choreographysaga.payment.client.BankServiceManager;
@@ -15,6 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
 
+import static choreographysaga.payment.util.Constant.*;
+
 
 @Slf4j
 @Service
@@ -22,6 +24,7 @@ import java.util.Optional;
 public class PaymentService {
     private final PaymentRepository repository;
     private final BankServiceManager bankServiceManager;
+    private final PaymentStateManager paymentStateManager;
 
     public String createPayment(CreatePaymentRequest request) {
         log.info("Creating payment for orderId: {} with amount: {}", request.orderId(), request.amount());
@@ -29,29 +32,33 @@ public class PaymentService {
         repository.save(payment);
         log.info("Payment created with ID: {}", payment.getId());
 
-        BankResponse bankResponse = bankServiceManager.startPayment(payment.getId(), payment.getAmount());
+        BankTransactionResponse bankTransactionResponse = bankServiceManager.startPayment(payment.getId(), payment.getAmount());
         payment.setStatus(PaymentStatus.STARTED);
         repository.save(payment);
         log.info("Payment started for payment ID: {}", payment.getId());
-        return bankResponse.html();
+        return bankTransactionResponse.html();
     }
 
 
     public ModelAndView callback(PaymentCallbackRequest request) {
         Optional<Payment> optionalPayment = repository.findById(request.paymentId());
-        if(optionalPayment.isEmpty()) {
+        if (optionalPayment.isEmpty()) {
             log.error("Payment not found for paymentId: {}", request.paymentId());
-            return new ModelAndView("error", "redirectUrl", "http://localhost:3530/payments/error");
+            return new ModelAndView(ERROR, REDIRECT_URL, ERROR_URL).addObject(MESSAGE, "Payment not found");
         }
         Payment payment = optionalPayment.get();
 
+        if (payment.getStatus() != PaymentStatus.STARTED) {
+            log.warn("Payment with ID: {} is not in STARTED status. Current status: {}", payment.getId(), payment.getStatus());
+            return new ModelAndView(ERROR, REDIRECT_URL, ERROR_URL).addObject(MESSAGE, "Payment already processed");
+        }
 
-        // check idempotency
-        // use handshake method to verify the connection between bank and payment service
-        // update payment status
-        // publish events: order, stock, bank, notification
-        // redirect
+        boolean handshake = bankServiceManager.handshake(request.paymentId());
+        if (!handshake) {
+            log.error("Handshake failed for paymentId: {}. Bank transaction status: {}", request.paymentId(), request.status());
+            return paymentStateManager.markAsFailed(request.paymentId());
+        }
 
-        return new ModelAndView("success", "redirectUrl", "http://localhost:3530/payments/success");
+        return paymentStateManager.markAsCompleted(request.paymentId());
     }
 }

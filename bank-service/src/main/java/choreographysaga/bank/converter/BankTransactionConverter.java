@@ -2,7 +2,7 @@ package choreographysaga.bank.converter;
 
 import choreographysaga.bank.model.BankTransaction;
 import choreographysaga.common.model.enm.BankTransactionStatus;
-import choreographysaga.common.dto.StartPaymentRequest;
+import choreographysaga.common.dto.CreateBankTransactionRequest;
 
 import java.time.Instant;
 
@@ -10,7 +10,7 @@ public class BankTransactionConverter {
     private BankTransactionConverter() {
     }
 
-    public static BankTransaction toEntity(StartPaymentRequest request, Integer otpCode) {
+    public static BankTransaction toEntity(CreateBankTransactionRequest request, Integer otpCode) {
         BankTransaction bankTransaction = new BankTransaction();
         bankTransaction.setPaymentId(request.paymentId());
         bankTransaction.setAmount(request.amount());

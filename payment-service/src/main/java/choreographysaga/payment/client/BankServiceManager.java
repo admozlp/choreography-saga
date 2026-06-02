@@ -1,7 +1,8 @@
 package choreographysaga.payment.client;
 
-import choreographysaga.common.dto.BankResponse;
-import choreographysaga.common.dto.StartPaymentRequest;
+import choreographysaga.common.dto.BankHandshakeRequest;
+import choreographysaga.common.dto.BankTransactionResponse;
+import choreographysaga.common.dto.CreateBankTransactionRequest;
 import choreographysaga.common.exception.OperationException;
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -22,13 +23,26 @@ public class BankServiceManager {
 
     @CircuitBreaker(name = "bankService", fallbackMethod = "startPaymentFallback")
     @Retry(name = "bankService")
-    public BankResponse startPayment(Long paymentId, BigDecimal amount) {
-        return bankClient.startPayment(new StartPaymentRequest(paymentId, amount, "http://localhost:3530/payments/callback")).getData();
+    public BankTransactionResponse startPayment(Long paymentId, BigDecimal amount) {
+        return bankClient.startPayment(new CreateBankTransactionRequest(paymentId, amount, "http://localhost:3530/payments/callback")).getData();
     }
 
-    public BankResponse startPaymentFallback(Long paymentId, BigDecimal amount, RuntimeException e) {
+    public BankTransactionResponse startPaymentFallback(Long paymentId, BigDecimal amount, RuntimeException e) {
         FeignException feignException = (FeignException) e;
         log.error("startPaymentFallback triggered. paymentId: {}, Cause: {}", paymentId, feignException.getMessage());
         throw new OperationException(feignException.getMessage(), HttpStatus.valueOf(feignException.status()));
+    }
+
+
+    @CircuitBreaker(name = "bankService", fallbackMethod = "handshakeFallback")
+    @Retry(name = "bankService")
+    public boolean handshake(Long paymentId) {
+        return bankClient.handshake(new BankHandshakeRequest(paymentId)).getData();
+    }
+
+    public boolean handshakeFallback(Long paymentId, RuntimeException e) {
+        FeignException feignException = (FeignException) e;
+        log.error("handshakeFallback triggered. paymentId: {}, Cause: {}", paymentId, feignException.getMessage());
+        return false;
     }
 }

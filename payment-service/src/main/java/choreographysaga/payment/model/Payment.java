@@ -25,8 +25,7 @@ public class Payment {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Builder.Default
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PaymentStatus status = PaymentStatus.CREATED;
+    private PaymentStatus status;
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
-public record StartPaymentRequest(
+public record CreateBankTransactionRequest(
         @NotNull(message = "paymentId cannot be null")
         Long paymentId,
         @NotNull(message = "amount cannot be null")

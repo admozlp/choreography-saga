@@ -4,8 +4,9 @@ import choreographysaga.bank.converter.BankTransactionConverter;
 import choreographysaga.bank.dto.ConfirmPaymentRequest;
 import choreographysaga.bank.model.BankTransaction;
 import choreographysaga.bank.repository.BankTransactionRepository;
-import choreographysaga.common.dto.BankResponse;
-import choreographysaga.common.dto.StartPaymentRequest;
+import choreographysaga.common.dto.BankHandshakeRequest;
+import choreographysaga.common.dto.BankTransactionResponse;
+import choreographysaga.common.dto.CreateBankTransactionRequest;
 import choreographysaga.common.exception.OperationException;
 import choreographysaga.common.model.enm.BankTransactionStatus;
 import jakarta.annotation.PostConstruct;
@@ -42,15 +43,15 @@ public class BankTransactionService {
 
     private final BankTransactionRepository repository;
 
-    public BankResponse startPayment(StartPaymentRequest request) {
+    public BankTransactionResponse startPayment(CreateBankTransactionRequest request) {
         log.info("Bank process started for paymentId: {} with amount: {}", request.paymentId(), request.amount());
         Integer otpCode = generateOtpCode();
         repository.save(BankTransactionConverter.toEntity(request, otpCode));
 
         String html = generateHtml(request);
-        BankResponse bankResponse = new BankResponse(html, request.paymentId().toString(), UUID.randomUUID());
+        BankTransactionResponse bankTransactionResponse = new BankTransactionResponse(html, request.paymentId().toString(), UUID.randomUUID());
         log.info("Bank process completed for paymentId: {}. Returning HTML response.", request.paymentId());
-        return bankResponse;
+        return bankTransactionResponse;
     }
 
     private Integer generateOtpCode() {
@@ -64,7 +65,7 @@ public class BankTransactionService {
         throw new OperationException("Couldn't generate otpCode", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private String generateHtml(StartPaymentRequest request) {
+    private String generateHtml(CreateBankTransactionRequest request) {
         return cachedTemplate
                 .replace("${MERCHANT_NAME}", "Adem Özalp A.Ş")
                 .replace("${CURRENCY_SYMBOL}", "₺")
@@ -111,9 +112,18 @@ public class BankTransactionService {
                 .replace("${STATUS}", bankTransaction.getStatus().name());
     }
 
-    public void handshake(String paymentId, String status) {
-        log.info("Handshake received for paymentId: {}", paymentId);
-        // This method can be used to verify the connection between bank and payment service
-        // update bank transaction status as COMPLETED or FAILED based on the status received from payment service
+    @Transactional
+    public boolean handshake(BankHandshakeRequest request) {
+        log.info("Handshake received for paymentId: {}", request.paymentId());
+        BankTransaction bankTransaction = repository.findByPaymentId(request.paymentId())
+                .orElseThrow(() -> new OperationException("Transaction not found for handshake", HttpStatus.NOT_FOUND));
+
+        if (bankTransaction.getStatus() != BankTransactionStatus.CONFIRMED) {
+            log.error("Handshake failed for paymentId: {}. Transaction status is not CONFIRMED. Current status: {}", request.paymentId(), bankTransaction.getStatus());
+            return false;
+        }
+        bankTransaction.setStatus(BankTransactionStatus.COMPLETED);
+        log.info("Handshake successful for paymentId: {}. Transaction marked as COMPLETED.", request.paymentId());
+        return true;
     }
 }
