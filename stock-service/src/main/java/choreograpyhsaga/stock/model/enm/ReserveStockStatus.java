@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum ReserveStockStatus {
     RESERVED("Reserved"),
     CONFIRMED("Confirmed"),
-    CANCELED("Canceled");
+    CANCELED("Canceled"),
+    EXPIRED("Expired");
 
     private final String displayName;
 

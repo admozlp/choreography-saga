@@ -193,7 +193,7 @@
             const res = await fetch('http://localhost:2530/bank-transactions/confirm', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({paymentId: document.getElementById('paymentId').value, otp: entered})
+                body: JSON.stringify({paymentId: document.getElementById('paymentId').value, otpCode: entered})
             });
             if (res.ok) {
                 alert('Odeme onaylandi!');

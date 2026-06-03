@@ -16,8 +16,8 @@ public interface BankTransactionRepository extends JpaRepository<BankTransaction
 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select  bt from BankTransaction  bt where bt.paymentId = :paymentId and bt.status = :status")
-    Optional<BankTransaction> findByPaymentIdAndStatus(@Param("paymentId") Long paymentId, @Param("status") BankTransactionStatus status);
+    @Query("select  bt from BankTransaction  bt where bt.paymentId = :paymentId")
+    Optional<BankTransaction> findByPaymentIdAndStatus(@Param("paymentId") Long paymentId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select  bt from BankTransaction  bt where bt.paymentId = :paymentId")

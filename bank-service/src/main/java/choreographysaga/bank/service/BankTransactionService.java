@@ -79,8 +79,13 @@ public class BankTransactionService {
     public String confirmPayment(ConfirmPaymentRequest request) {
         log.info("Confirming payment with paymentId: {}", request.paymentId());
 
-        BankTransaction bankTransaction = repository.findByPaymentIdAndStatus(request.paymentId(), BankTransactionStatus.PENDING)
+        BankTransaction bankTransaction = repository.findByPaymentIdAndStatus(request.paymentId())
                 .orElseThrow(() -> new OperationException("Transaction not found", HttpStatus.NOT_FOUND));
+
+        if (bankTransaction.getStatus() != BankTransactionStatus.PENDING) {
+            log.error("Transaction already processed, paymentId: {}, transaction status: {}", bankTransaction.getPaymentId(), bankTransaction.getStatus());
+            throw new OperationException("Transaction already processed", HttpStatus.BAD_REQUEST);
+        }
 
         if (bankTransaction.getExpiresAt().isBefore(java.time.Instant.now())) {
             bankTransaction.setStatus(BankTransactionStatus.EXPIRED);
@@ -122,10 +127,13 @@ public class BankTransactionService {
             return true;
         }
 
+        // buradaki doğrulama bankanın hata vermesi durumunu simüle ediyor.
         if (bankTransaction.getStatus() != BankTransactionStatus.CONFIRMED) {
             log.error("Handshake failed for paymentId: {}. Transaction status is not CONFIRMED. Current status: {}", request.paymentId(), bankTransaction.getStatus());
             return false;
         }
+
+        // para transferini gerçekleştirmeyi simüle eder
         bankTransaction.setStatus(BankTransactionStatus.COMPLETED);
         log.info("Handshake successful for paymentId: {}. Transaction marked as COMPLETED.", request.paymentId());
         return true;

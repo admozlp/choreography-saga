@@ -25,7 +25,6 @@ public class PaymentService {
     private final PaymentRepository repository;
     private final BankServiceManager bankServiceManager;
     private final PaymentStateManager paymentStateManager;
-    private final OutboxEventPublisher outboxEventPublisher;
 
     public String createPayment(CreatePaymentRequest request) {
         log.info("Creating payment for orderId: {} with amount: {}", request.orderId(), request.amount());
@@ -45,18 +44,19 @@ public class PaymentService {
         Optional<Payment> optionalPayment = repository.findById(request.paymentId());
         if (optionalPayment.isEmpty()) {
             log.error("Payment not found for paymentId: {}", request.paymentId());
-            return new ModelAndView(ERROR, REDIRECT_URL, ERROR_URL).addObject(MESSAGE, "Payment not found");
+            return new ModelAndView("redirect:" + ERROR_URL).addObject(MESSAGE, "Payment not found");
         }
         Payment payment = optionalPayment.get();
 
+        // check idempotency
         if (payment.getStatus() != PaymentStatus.STARTED) {
             log.warn("Payment with ID: {} is not in STARTED status. Current status: {}", payment.getId(), payment.getStatus());
-            return new ModelAndView(ERROR, REDIRECT_URL, ERROR_URL).addObject(MESSAGE, "Payment already processed");
+            return new ModelAndView("redirect:" + ERROR_URL).addObject(MESSAGE, "Payment already processed");
         }
 
         boolean handshake = bankServiceManager.handshake(request.paymentId());
         if (!handshake) {
-            log.error("Handshake failed for paymentId: {}. Bank transaction status: {}", request.paymentId(), request.status());
+            log.error("Handshake failed for paymentId: {}", request.paymentId());
             return paymentStateManager.markAsFailed(request.paymentId());
         }
 

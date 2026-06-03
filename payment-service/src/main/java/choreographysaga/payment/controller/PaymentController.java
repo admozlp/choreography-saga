@@ -26,12 +26,12 @@ public class PaymentController {
     }
 
     @GetMapping("/success")
-    public String success(@ModelAttribute @Valid PaymentCallbackRequest request) {
+    public String success() {
         return "Payment successful";
     }
 
     @GetMapping("/error")
-    public String erro(@ModelAttribute @Valid PaymentCallbackRequest request) {
-        return "Payment failed";
+    public String error(@RequestParam(value = "message", required = false, defaultValue = "Payment failed") String message) {
+        return message;
     }
 }

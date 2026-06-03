@@ -31,5 +31,7 @@ public class Order {
         STOCK_WILL_BE_RESERVED,
         STOCK_RESERVED,
         PAYMENT_CREATED,
+        PAYMENT_COMPLETED,
+        PAYMENT_FAILED,
     }
 }
