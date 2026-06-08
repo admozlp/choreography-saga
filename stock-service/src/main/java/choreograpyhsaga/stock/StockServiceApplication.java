@@ -10,6 +10,4 @@ public class StockServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(StockServiceApplication.class, args);
     }
-
-    //TODO : remove STOCK_RESERVATION_COMPENSATION_EVENT
 }

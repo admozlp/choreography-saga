@@ -1,6 +1,7 @@
 package choreograpyhsaga.stock.listener;
 
-import choreographysaga.common.event.StockReservationCompensationEvent;
+import choreographysaga.common.event.OrderStatusUpdateFailedEvent;
+import choreographysaga.common.event.PaymentInitiationFailedEvent;
 import choreograpyhsaga.stock.service.ReserveStockService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,8 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.UUID;
 
-import static choreographysaga.common.event.EventTypes.STOCK_RESERVATION_COMPENSATION_EVENT;
+import static choreographysaga.common.event.EventTypes.ORDER_STATUS_UPDATE_FAILED_EVENT;
+import static choreographysaga.common.event.EventTypes.PAYMENT_INITIATION_FAILED_EVENT;
 
 @Slf4j
 @Component
@@ -45,10 +47,15 @@ public class OrderListener {
                              @Header("eventType") String eventType,
                              @Header("id") String eventId) throws Exception {
         switch (eventType) {
-            case STOCK_RESERVATION_COMPENSATION_EVENT -> {
-                log.info("StockReservationCompensationEvent received: {}", payload);
-                StockReservationCompensationEvent event = objectMapper.readValue(payload, StockReservationCompensationEvent.class);
-                reserveStockService.cancelReservation(event.orderId(), UUID.fromString(eventId), STOCK_RESERVATION_COMPENSATION_EVENT);
+            case ORDER_STATUS_UPDATE_FAILED_EVENT -> {
+                log.info("OrderStatusUpdateFailedEvent received: {}", payload);
+                OrderStatusUpdateFailedEvent event = objectMapper.readValue(payload, OrderStatusUpdateFailedEvent.class);
+                reserveStockService.cancelReservation(event.orderId(), UUID.fromString(eventId), ORDER_STATUS_UPDATE_FAILED_EVENT);
+            }
+            case PAYMENT_INITIATION_FAILED_EVENT -> {
+                log.info("PaymentInitiationFailedEvent received: {}", payload);
+                PaymentInitiationFailedEvent event = objectMapper.readValue(payload, PaymentInitiationFailedEvent.class);
+                reserveStockService.cancelReservation(event.orderId(), UUID.fromString(eventId), PAYMENT_INITIATION_FAILED_EVENT);
             }
             case null -> log.warn("Received event with null eventType, eventId: {}, ignoring", eventId);
             default -> log.debug("Ignoring eventType={}", eventType);

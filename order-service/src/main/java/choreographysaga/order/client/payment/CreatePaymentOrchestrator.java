@@ -2,6 +2,7 @@ package choreographysaga.order.client.payment;
 
 
 import choreographysaga.common.dto.CreatePaymentRequest;
+import choreographysaga.common.event.PaymentInitiationFailedEvent;
 import choreographysaga.order.model.Order;
 import choreographysaga.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class CreatePaymentOrchestrator {
 
     @Transactional
     public String createPayment(Order order) {
-        applicationEventPublisher.publishEvent(new choreographysaga.common.event.StockReservationCompensationEvent(order.getId()));
+        applicationEventPublisher.publishEvent(new PaymentInitiationFailedEvent(order.getId()));
         String html = paymentClientManager.createPayment(new CreatePaymentRequest(order.getId(), BigDecimal.valueOf(order.getQuantity()).multiply(BigDecimal.valueOf(124L))));
         order.setStatus(Order.OrderStatus.PAYMENT_CREATED);
         repository.save(order);
