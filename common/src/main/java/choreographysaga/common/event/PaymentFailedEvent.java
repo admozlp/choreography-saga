@@ -1,4 +1,4 @@
 package choreographysaga.common.event;
 
-public record PaymentFailedEvent(Long orderId) {
+public record PaymentFailedEvent(Long orderId, Long paymentId) {
 }

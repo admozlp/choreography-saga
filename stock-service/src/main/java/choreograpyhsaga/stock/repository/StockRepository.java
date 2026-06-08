@@ -22,7 +22,12 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     @Query(value = """
              select s.quantity - coalesce(sum(rs.quantity), 0) from stocks s
-             left join reserve_stocks rs on (rs.stock_id = s.id and rs.status = 'RESERVED' and rs.expires_at > now())
+             left join reserve_stocks rs on (
+                                    rs.stock_id = s.id and
+                                                (
+                                                    (rs.status = 'RESERVED' and rs.expires_at > now()) or rs.status = 'CONFIRMED'
+                                                )
+                             )
              where s.id = :id
              group by s.id, s.quantity
             """, nativeQuery = true)

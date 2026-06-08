@@ -1,8 +1,8 @@
-package choreograpyhsaga.stock.listener;
+package choreographysaga.order.listener;
 
 import choreographysaga.common.event.PaymentCompletedEvent;
 import choreographysaga.common.event.PaymentFailedEvent;
-import choreograpyhsaga.stock.service.ReserveStockService;
+import choreographysaga.order.service.OrderService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ import static choreographysaga.common.event.EventTypes.PAYMENT_FAILED_EVENT;
 @RequiredArgsConstructor
 public class PaymentListener {
     private final ObjectMapper objectMapper;
-    private final ReserveStockService reserveStockService;
+    private final OrderService orderService;
 
     @RetryableTopic(
             attempts = "4",
@@ -42,7 +42,7 @@ public class PaymentListener {
                     EntityNotFoundException.class
             }
     )
-    @KafkaListener(topics = "Payment.events", groupId = "stock-service")
+    @KafkaListener(topics = "Payment.events", groupId = "order-service")
     public void onPaymentEvent(@Payload String payload,
                                @Header("eventType") String eventType,
                                @Header("id") String eventId) throws Exception {
@@ -50,12 +50,12 @@ public class PaymentListener {
             case PAYMENT_FAILED_EVENT -> {
                 log.info("PaymentFailedEvent received: {}", payload);
                 PaymentFailedEvent event = objectMapper.readValue(payload, PaymentFailedEvent.class);
-                reserveStockService.cancelReservation(event.orderId(), UUID.fromString(eventId), PAYMENT_FAILED_EVENT);
+                orderService.markAsPaymentFailed(event.orderId(), UUID.fromString(eventId), PAYMENT_FAILED_EVENT);
             }
             case PAYMENT_COMPLETED_EVENT -> {
                 log.info("PaymentCompletedEvent recieved: {}", payload);
                 PaymentCompletedEvent event = objectMapper.readValue(payload, PaymentCompletedEvent.class);
-                reserveStockService.confirmReservation(event.orderId(), UUID.fromString(eventId));
+                orderService.markAsPaymentCompleted(event.orderId(), UUID.fromString(eventId), PAYMENT_COMPLETED_EVENT);
             }
             case null -> log.warn("Received event with null eventType, eventId: {}, ignoring", eventId);
             default -> log.debug("Ignoring eventType={}", eventType);

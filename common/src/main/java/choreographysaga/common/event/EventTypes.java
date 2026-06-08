@@ -7,4 +7,5 @@ public class EventTypes {
 
     public static final String STOCK_RESERVATION_COMPENSATION_EVENT = "StockReservationCompensationEvent";
     public static final String PAYMENT_FAILED_EVENT = "PaymentFailedEvent";
+    public static final String PAYMENT_COMPLETED_EVENT = "PaymentCompletedEvent";
 }

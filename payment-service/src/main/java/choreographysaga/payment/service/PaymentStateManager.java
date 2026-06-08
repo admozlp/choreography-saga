@@ -1,6 +1,7 @@
 package choreographysaga.payment.service;
 
 
+import choreographysaga.common.event.PaymentCompletedEvent;
 import choreographysaga.common.event.PaymentFailedEvent;
 import choreographysaga.payment.model.Outbox;
 import choreographysaga.payment.model.Payment;
@@ -17,6 +18,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
 
+import static choreographysaga.common.event.EventTypes.PAYMENT_COMPLETED_EVENT;
 import static choreographysaga.common.event.EventTypes.PAYMENT_FAILED_EVENT;
 import static choreographysaga.payment.util.Constant.*;
 
@@ -44,10 +46,9 @@ public class PaymentStateManager {
         }
         payment.setStatus(PaymentStatus.FAILED);
 
-        //events
         outboxEventPublisher.push(
                 new Outbox(paymentId.toString(), "Payment", PAYMENT_FAILED_EVENT,
-                        objectMapper.writeValueAsString(new PaymentFailedEvent(payment.getOrderId())
+                        objectMapper.writeValueAsString(new PaymentFailedEvent(payment.getOrderId(), paymentId)
                         )));
 
         return new ModelAndView(REDIRECT + ERROR_URL).addObject(MESSAGE, "Payment failed");
@@ -55,13 +56,22 @@ public class PaymentStateManager {
 
     @Transactional
     public ModelAndView markAsCompleted(Long paymentId) {
-        int updateCount = repository.updateIfStatusStarted(paymentId, PaymentStatus.COMPLETED);
-        if (updateCount == 0) {
-            log.error("Payment already processed in markAsCompleted, with paymentId: {}", paymentId);
+        Optional<Payment> optionalPayment = repository.findByIdForUpdate(paymentId);
+        if (optionalPayment.isEmpty()) {
+            log.error("Payment not found in markAsCompleted for paymentId: {}", paymentId);
+            return new ModelAndView(REDIRECT + ERROR_URL).addObject(MESSAGE, "Payment not found");
+        }
+        Payment payment = optionalPayment.get();
+        if (payment.getStatus() != PaymentStatus.STARTED) {
+            log.error("Payment already processed in markAsCompleted with paymentId: {}", paymentId);
             return new ModelAndView(REDIRECT + ERROR_URL).addObject(MESSAGE, "Payment already processed");
         }
+        payment.setStatus(PaymentStatus.COMPLETED);
 
-        //events
+        outboxEventPublisher.push(
+                new Outbox(paymentId.toString(), "Payment", PAYMENT_COMPLETED_EVENT,
+                        objectMapper.writeValueAsString(new PaymentCompletedEvent(payment.getOrderId(), paymentId)
+                        )));
 
         return new ModelAndView(REDIRECT + SUCCESS_URL);
     }

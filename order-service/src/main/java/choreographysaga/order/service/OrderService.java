@@ -6,9 +6,13 @@ import choreographysaga.order.converter.OrderConverter;
 import choreographysaga.order.dto.CreateOrderRequest;
 import choreographysaga.order.model.Order;
 import choreographysaga.order.repository.OrderRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -17,6 +21,7 @@ public class OrderService {
     private final OrderRepository repository;
     private final ReserveStockOrchestrator reserveStockOrchestrator;
     private final CreatePaymentOrchestrator createPaymentOrchestrator;
+    private final ProcessedEventService processedEventService;
 
 
     public String createOrder(CreateOrderRequest request) {
@@ -29,5 +34,50 @@ public class OrderService {
         String html = createPaymentOrchestrator.createPayment(order);
         log.info("Payment created for order ID: {}", order.getId());
         return html;
+    }
+
+
+    @Transactional
+    public void markAsPaymentFailed(Long orderId, UUID eventId, String eventType) {
+        if (processedEventService.isProcessed(eventId)) {
+            log.info("Event already processed in markAsPaymentFailed, eventId: {}", eventId);
+            return;
+        }
+
+        repository.findByIdAndStatus(orderId, Order.OrderStatus.PAYMENT_CREATED).ifPresentOrElse(
+                order -> {
+                    order.setStatus(Order.OrderStatus.PAYMENT_FAILED);
+                    log.info("Order marked as payment failed, orderId: {}", orderId);
+                },
+                () -> {
+                    log.error("Order not found in markAsPaymentFailed with id: {}", orderId);
+                    throw new EntityNotFoundException("Order not found with id: " + orderId);
+                }
+        );
+        processedEventService.markAsProcessed(eventId, eventType, String.valueOf(orderId));
+    }
+
+
+    @Transactional
+    public void markAsPaymentCompleted(Long orderId, UUID eventId, String eventType) {
+        if (processedEventService.isProcessed(eventId)) {
+            log.info("Event already processed in markAsPaymentCompleted, eventId: {}", eventId);
+            return;
+        }
+
+        log.info("tx active? {}",
+                org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive());
+
+        repository.findByIdAndStatus(orderId, Order.OrderStatus.PAYMENT_CREATED).ifPresentOrElse(
+                order -> {
+                    order.setStatus(Order.OrderStatus.PAYMENT_COMPLETED);
+                    log.info("Order marked as payment completed, orderId: {}", orderId);
+                },
+                () -> {
+                    log.error("Order not found in markAsPaymentCompleted with id: {}", orderId);
+                    throw new EntityNotFoundException("Order not found with id: " + orderId);
+                }
+        );
+        processedEventService.markAsProcessed(eventId, eventType, String.valueOf(orderId));
     }
 }

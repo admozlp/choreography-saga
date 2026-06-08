@@ -2,6 +2,7 @@ package choreograpyhsaga.stock.listener;
 
 import choreographysaga.common.event.StockReservationCompensationEvent;
 import choreograpyhsaga.stock.service.ReserveStockService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.BackOff;
@@ -35,7 +36,8 @@ public class OrderListener {
             topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE,
             exclude = {
                     JacksonException.class,
-                    IllegalArgumentException.class
+                    IllegalArgumentException.class,
+                    EntityNotFoundException.class
             }
     )
     @KafkaListener(topics = "Order.events", groupId = "stock-service")
@@ -46,7 +48,7 @@ public class OrderListener {
             case STOCK_RESERVATION_COMPENSATION_EVENT -> {
                 log.info("StockReservationCompensationEvent received: {}", payload);
                 StockReservationCompensationEvent event = objectMapper.readValue(payload, StockReservationCompensationEvent.class);
-                reserveStockService.cancelReservation(event.orderId(), UUID.fromString(eventId));
+                reserveStockService.cancelReservation(event.orderId(), UUID.fromString(eventId), STOCK_RESERVATION_COMPENSATION_EVENT);
             }
             case null -> log.warn("Received event with null eventType, eventId: {}, ignoring", eventId);
             default -> log.debug("Ignoring eventType={}", eventType);
