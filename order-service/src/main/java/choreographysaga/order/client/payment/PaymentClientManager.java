@@ -23,9 +23,17 @@ public class PaymentClientManager {
         return paymentClient.createPayment(request).getData();
     }
 
-    public String createPaymentFallback(CreatePaymentRequest request, RuntimeException e) {
-        FeignException feignException = (FeignException) e;
-        log.error("createPaymentFallback triggered. orderId: {} Cause: {}, exceptionMessage: {}", request.orderId(), e.getMessage(), feignException.getMessage());
-        throw new OperationException(e.getMessage(), HttpStatus.valueOf(feignException.status()));
+    public String createPaymentFallback(CreatePaymentRequest request, Throwable e) {
+        log.error("createPaymentFallback triggered. orderId: {}, error: {}", request.orderId(), e.toString());
+
+        // Only a real HTTP response carries a usable status; FeignException.status() is -1
+        // for connect/read failures (timeout, connection refused).
+        if (e instanceof FeignException fe && fe.status() > 0) {
+            throw new OperationException(fe.getMessage(), HttpStatus.valueOf(fe.status()));
+        }
+
+        // Circuit open (CallNotPermittedException), no-response Feign failures (status -1),
+        // or anything else: payment service is effectively unavailable.
+        throw new OperationException("Payment service unavailable: " + e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
     }
 }

@@ -1,7 +1,9 @@
 package choreographysaga.order.service;
 
+import choreographysaga.common.dto.CreatePaymentRequest;
 import choreographysaga.common.dto.ReserveStockRequest;
 import choreographysaga.order.client.payment.CreatePaymentOrchestrator;
+import choreographysaga.order.client.payment.PaymentClientManager;
 import choreographysaga.order.client.stock.ReserveStockClientManager;
 import choreographysaga.order.client.stock.ReserveStockOrchestrator;
 import choreographysaga.order.converter.OrderConverter;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Slf4j
@@ -25,6 +28,7 @@ public class OrderService {
     private final CreatePaymentOrchestrator createPaymentOrchestrator;
     private final ProcessedEventService processedEventService;
     private final ReserveStockClientManager reserveStockClientManager;
+    private final PaymentClientManager paymentClientManager;
 
 
     public String createOrder(CreateOrderRequest request) {
@@ -35,7 +39,8 @@ public class OrderService {
         reserveStockOrchestrator.updateStatus(order.getId());
         log.info("Stock reserved for order ID: {}", order.getId());
 
-        String html = createPaymentOrchestrator.createPayment(order);
+        String html = paymentClientManager.createPayment(new CreatePaymentRequest(order.getId(), BigDecimal.valueOf(order.getQuantity()).multiply(BigDecimal.valueOf(124L))));
+        createPaymentOrchestrator.updateStatus(order.getId());
         log.info("Payment created for order ID: {}", order.getId());
         return html;
     }

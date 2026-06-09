@@ -13,6 +13,8 @@ import java.util.Optional;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
+    Optional<Payment> findByOrderId(Long orderId);
+
     @Modifying
     @Query("UPDATE Payment p set p.status = :paymentStatus where p.id = :paymentId and p.status = PaymentStatus.STARTED")
     int updateIfStatusStarted(@Param("paymentId") Long paymentId, @Param("paymentStatus") PaymentStatus paymentStatus);

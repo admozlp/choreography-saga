@@ -28,4 +28,9 @@ public class Payment {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
+
+    // Bank 3DS form returned by startPayment; stored so a retried createPayment for the same
+    // order can replay the original form (idempotency) instead of starting a second bank transaction.
+    @Column(columnDefinition = "TEXT")
+    private String html;
 }
