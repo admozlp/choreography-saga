@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface ReserveStockRepository extends JpaRepository<ReserveStock, Long> {
     Optional<ReserveStock> findByOrderId(Long orderId);
 
+    boolean existsByOrderId(Long orderId);
+
     @Modifying(clearAutomatically = true)
     @Query("UPDATE ReserveStock r SET r.status = :expired " +
             "WHERE r.status = :reserved AND r.expiresAt < :now")

@@ -27,6 +27,11 @@ public class ReserveStockService {
 
     @Transactional
     public void reserveStock(ReserveStockRequest request) {
+        if (repository.existsByOrderId(request.orderId())) {
+            log.info("Reservation already exists for orderId: {}, skipping (idempotent)", request.orderId());
+            return;
+        }
+
         Stock stock = stockService.findByProductIdAndQuantity(request.productId(), request.quantity());
         ReserveStock reserveStock = ReserveStockConverter.toEntity(request, stock);
         reserveStock.setExpiresAt(Instant.now().plusSeconds(600));

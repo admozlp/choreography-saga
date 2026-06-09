@@ -1,6 +1,8 @@
 package choreographysaga.order.service;
 
+import choreographysaga.common.dto.ReserveStockRequest;
 import choreographysaga.order.client.payment.CreatePaymentOrchestrator;
+import choreographysaga.order.client.stock.ReserveStockClientManager;
 import choreographysaga.order.client.stock.ReserveStockOrchestrator;
 import choreographysaga.order.converter.OrderConverter;
 import choreographysaga.order.dto.CreateOrderRequest;
@@ -22,13 +24,15 @@ public class OrderService {
     private final ReserveStockOrchestrator reserveStockOrchestrator;
     private final CreatePaymentOrchestrator createPaymentOrchestrator;
     private final ProcessedEventService processedEventService;
+    private final ReserveStockClientManager reserveStockClientManager;
 
 
     public String createOrder(CreateOrderRequest request) {
         log.info("Creating order with productId: {} and quantity: {}", request.productId(), request.quantity());
         Order order = OrderConverter.toEntity(request);
         repository.save(order);
-        reserveStockOrchestrator.reserveStock(order);
+        reserveStockClientManager.reserveStock(new ReserveStockRequest(order.getProductId(), order.getQuantity(), order.getId()));
+        reserveStockOrchestrator.updateStatus(order.getId());
         log.info("Stock reserved for order ID: {}", order.getId());
 
         String html = createPaymentOrchestrator.createPayment(order);

@@ -22,10 +22,14 @@ public class ReserveStockClientManager {
         reserveStockClient.reserveStock(reserveStockRequest);
     }
 
-    public void reserveStockFallback(ReserveStockRequest reserveStockRequest, RuntimeException e) {
-        FeignException feignException = (FeignException) e;
-        log.error("reserveStockFallback triggered. reserveStockRequest: {}, exceptionMessage: {}", reserveStockRequest.toString(), feignException.getMessage());
-        throw new OperationException(feignException.getMessage(), HttpStatus.valueOf(feignException.status()));
+    public void reserveStockFallback(ReserveStockRequest reserveStockRequest, Throwable e) {
+        log.error("reserveStockFallback triggered. reserveStockRequest: {}, error: {}", reserveStockRequest, e.toString());
+
+        if (e instanceof FeignException fe && fe.status() > 0) {
+            throw new OperationException(fe.getMessage(), HttpStatus.valueOf(fe.status()));
+        }
+
+        throw new OperationException("Stock service unavailable: " + e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
     }
 
 }
