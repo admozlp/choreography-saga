@@ -37,4 +37,4 @@ resilience4j:
           - io.github.resilience4j.circuitbreaker.CallNotPermittedException
 
 server:
-  port: 2524
+  port: 0

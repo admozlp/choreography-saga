@@ -24,7 +24,7 @@ public class BankServiceManager {
     @CircuitBreaker(name = "bankService", fallbackMethod = "startPaymentFallback")
     @Retry(name = "bankService")
     public BankTransactionResponse startPayment(Long paymentId, BigDecimal amount) {
-        return bankClient.startPayment(new CreateBankTransactionRequest(paymentId, amount, "http://localhost:3530/payments/callback")).getData();
+        return bankClient.startPayment(new CreateBankTransactionRequest(paymentId, amount, "http://localhost:1010/payment-service/api/payments/callback")).getData();
     }
 
     public BankTransactionResponse startPaymentFallback(Long paymentId, BigDecimal amount, RuntimeException e) {

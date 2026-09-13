@@ -1,9 +1,9 @@
 server:
-  port: 3530
+  port: 0
 
 spring:
   application:
-    name: stock-service
+    name: payment-service
   datasource:
     driver-class-name: org.postgresql.Driver
   flyway:

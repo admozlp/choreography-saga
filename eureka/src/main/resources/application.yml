@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: eureka-server
+
+server:
+  port: 8761
+
+
+
+eureka:
+  server:
+    enableSelfPreservation: false
+    response-cache-update-interval-ms: 5000
+  client:
+    fetch-registry: false
+    register-with-eureka: false

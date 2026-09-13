@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "payment-service",
-        url = "http://localhost:3530/payments",
+        path = "/payments",
         configuration = FeignClientConfig.class)
 public interface PaymentClient {
 

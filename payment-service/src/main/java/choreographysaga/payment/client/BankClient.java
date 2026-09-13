@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient(
         name = "bank-service",
-        url = "http://localhost:2530/bank-transactions",
+        path = "/bank-transactions",
         configuration = FeignClientConfig.class
 )
 public interface BankClient {

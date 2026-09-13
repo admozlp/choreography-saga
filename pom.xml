@@ -26,6 +26,8 @@
         <module>payment-service</module>
         <module>bank-service</module>
         <module>common</module>
+        <module>eureka</module>
+        <module>apigw</module>
     </modules>
     <scm>
         <connection/>
@@ -36,6 +38,8 @@
     <properties>
         <java.version>21</java.version>
         <spring-boot.version>4.0.3</spring-boot.version>
+        <spring-cloud.version>2025.1.1</spring-cloud.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencyManagement>
@@ -61,15 +65,10 @@
 
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-openfeign</artifactId>
-                <version>5.0.1</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
-                <version>5.0.1</version>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- Database -->

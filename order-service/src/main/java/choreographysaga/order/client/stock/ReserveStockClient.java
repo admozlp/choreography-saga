@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
         name = "stock-service",
-        url = "http://localhost:3532/reserve-stocks",
+        path = "/reserve-stocks",
         configuration = FeignClientConfig.class
 )
 public interface ReserveStockClient {

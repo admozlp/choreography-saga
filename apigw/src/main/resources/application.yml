@@ -1,0 +1,38 @@
+server:
+  port: 1010
+
+
+eureka:
+  instance:
+    prefer-ip-address: false
+    hostname: localhost
+    instance-id: ${spring.application.name}:${server.port}:${random.int}
+
+
+spring:
+  application:
+    name: apigw
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: order-service
+              uri: lb://order-service
+              predicates:
+                - Path=/api/orders/**
+              filters:
+                - StripPrefix=1
+            - id: stock-service
+              uri: lb://stock-service
+              predicates:
+                - Path=/api/stocks/**,/api/reserve-stocks/**,/api/products/**
+              filters:
+                - StripPrefix=1
+            - id: payment-service
+              uri: lb://payment-service
+              predicates:
+                - /api/payments/**
+              filters:
+                - StripPrefix=1
+
