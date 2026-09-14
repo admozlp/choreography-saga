@@ -14,4 +14,5 @@ public interface ProcessedEventRepository extends JpaRepository<ProcessedEvent, 
     @Modifying
     @Query("DELETE FROM ProcessedEvent pe WHERE pe.processedAt < :threshold")
     int deleteProcessedBefore(@Param("threshold") Instant threshold);
+
 }
