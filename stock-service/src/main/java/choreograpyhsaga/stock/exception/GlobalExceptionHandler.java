@@ -18,30 +18,30 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleLockTimeout(LockTimeoutException ex) {
         log.error("Lock timeout: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                .body(ApiResponse.error("Sistem yoğun, lütfen tekrar deneyin.", HttpStatus.SERVICE_UNAVAILABLE));
+                .body(ApiResponse.error("Sistem yoğun, lütfen tekrar deneyin."));
     }
 
     @ExceptionHandler(OperationException.class)
     public ResponseEntity<ApiResponse<Void>> handleOperationException(OperationException ex) {
         return ResponseEntity.status(ex.getHttpStatus())
-                .body(ApiResponse.error(ex.getMessage(), ex.getHttpStatus()));
+                .body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleEntityNotFoundException(EntityNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error(ex.getMessage(), HttpStatus.NOT_FOUND));
+                .body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> handleException(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
+                .body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
+                .body(ApiResponse.error(ex.getMessage()));
     }
 }

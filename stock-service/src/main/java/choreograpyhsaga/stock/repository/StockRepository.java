@@ -32,4 +32,18 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
              group by s.id, s.quantity
             """, nativeQuery = true)
     Integer findActiveQuantity(@Param("id") Long id);
+
+
+    @Query(value = """
+             select s.quantity - coalesce(sum(rs.quantity), 0) from stocks s
+             left join reserve_stocks rs on (
+                                    rs.stock_id = s.id and
+                                                (
+                                                    (rs.status = 'RESERVED' and rs.expires_at > now()) or rs.status = 'CONFIRMED'
+                                                )
+                             )
+             where s.product_id = :productId
+             group by s.id, s.quantity
+            """, nativeQuery = true)
+    Integer findActiveQuantityByProductId(@Param("productId") Long productId);
 }

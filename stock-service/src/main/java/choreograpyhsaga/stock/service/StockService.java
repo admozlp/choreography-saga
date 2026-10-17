@@ -56,4 +56,8 @@ public class StockService {
                 .orElseThrow(() -> new EntityNotFoundException("Stock not found with ID: " + stockId));
         return repository.findActiveQuantity(stock.getId());
     }
+
+    public Integer getActiveQuantityByProductId(Long productId) {
+        return repository.findActiveQuantityByProductId(productId);
+    }
 }

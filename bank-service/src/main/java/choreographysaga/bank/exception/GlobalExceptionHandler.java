@@ -12,6 +12,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OperationException.class)
     public ResponseEntity<ApiResponse<Void>> handleOperationException(OperationException e) {
         return ResponseEntity.status(e.getHttpStatus())
-                .body(ApiResponse.error(e.getMessage(), e.getHttpStatus()));
+                .body(ApiResponse.error(e.getMessage()));
     }
 }

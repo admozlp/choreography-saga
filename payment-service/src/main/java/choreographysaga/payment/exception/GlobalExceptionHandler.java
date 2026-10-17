@@ -14,18 +14,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OperationException.class)
     public ResponseEntity<ApiResponse<Void>> handleOperationException(OperationException e) {
         return ResponseEntity.status(e.getHttpStatus())
-                .body(ApiResponse.error(e.getMessage(), e.getHttpStatus()));
+                .body(ApiResponse.error(e.getMessage()));
     }
 
     @ExceptionHandler(CallNotPermittedException.class)
     public ResponseEntity<ApiResponse<Void>> handleCallNotPermittedException(CallNotPermittedException e) {
         return ResponseEntity.status(503)
-                .body(ApiResponse.error("Service unavailable, please try later", HttpStatus.SERVICE_UNAVAILABLE));
+                .body(ApiResponse.error("Service unavailable, please try later"));
     }
 
     @ExceptionHandler(ClassCastException.class)
     public ResponseEntity<ApiResponse<Void>> handleClassCastException(ClassCastException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("Unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR));
+                .body(ApiResponse.error("Unexpected error occurred"));
     }
 }

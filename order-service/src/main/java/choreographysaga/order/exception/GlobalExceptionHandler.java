@@ -16,24 +16,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleEntityNotFoundException(EntityNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error(ex.getMessage(), HttpStatus.NOT_FOUND));
+                .body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(OperationException.class)
     public ResponseEntity<ApiResponse<Void>> handleOperationException(OperationException ex) {
         return ResponseEntity.status(ex.getHttpStatus())
-                .body(ApiResponse.error(ex.getMessage(), ex.getHttpStatus()));
+                .body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
+                .body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(CallNotPermittedException.class)
     public ResponseEntity<ApiResponse<Void>> handleCallNotPermittedException(CallNotPermittedException e) {
         return ResponseEntity.status(503)
-                .body(ApiResponse.error("Service unavailable, please try later", HttpStatus.SERVICE_UNAVAILABLE));
+                .body(ApiResponse.error("Service unavailable, please try later"));
     }
 }

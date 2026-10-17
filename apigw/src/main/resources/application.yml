@@ -26,7 +26,7 @@ spring:
             - id: stock-service
               uri: lb://stock-service
               predicates:
-                - Path=/api/stocks/**,/api/reserve-stocks/**,/api/products/**
+                - Path=/api/stocks/**,/api/reserve-stocks/**,/api/products,/api/products/**
               filters:
                 - StripPrefix=1
             - id: payment-service
@@ -35,3 +35,10 @@ spring:
                 - Path=/api/payments/**
               filters:
                 - StripPrefix=1
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOriginPatterns: "*"
+                allowedMethods:
+                  - "*"
+                allowedHeaders: "*"
