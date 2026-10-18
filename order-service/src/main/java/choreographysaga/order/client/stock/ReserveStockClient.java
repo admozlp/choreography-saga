@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 )
 public interface ReserveStockClient {
 
-    @PostMapping("/reserve")
+    @PostMapping("/internal/reserve")
     void reserveStock(@RequestBody @Valid ReserveStockRequest request);
 }

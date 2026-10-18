@@ -6,10 +6,7 @@ import choreographysaga.order.dto.CreateOrderRequest;
 import choreographysaga.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -22,6 +19,11 @@ public class OrderController {
     @PostMapping
     public ApiResponse<String> createOrder(@RequestBody @Valid CreateOrderRequest request) {
         return ApiResponse.success(service.createOrder(request), "Order created successfully");
+    }
+
+    @GetMapping
+    public ApiResponse<String> getString() {
+        return ApiResponse.success("response", "Test order get api");
     }
 
 }

@@ -81,7 +81,11 @@
             <artifactId>spring-boot-starter-kafka</artifactId>
         </dependency>
 
-
+        <dependency>
+            <groupId>choreographysaga</groupId>
+            <artifactId>security-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

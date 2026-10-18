@@ -1,6 +1,5 @@
 package choreographysaga.bank.controller;
 
-
 import choreographysaga.bank.dto.ConfirmPaymentRequest;
 import choreographysaga.bank.service.BankTransactionService;
 import choreographysaga.common.dto.ApiResponse;
@@ -9,19 +8,27 @@ import choreographysaga.common.dto.BankTransactionResponse;
 import choreographysaga.common.dto.CreateBankTransactionRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bank-transactions")
-@CrossOrigin("*")
 public class BankTransactionController {
     private final BankTransactionService service;
 
     @PostMapping
-    public ApiResponse<BankTransactionResponse> startPayment(@RequestBody @Valid CreateBankTransactionRequest request) {
+    @PreAuthorize("hasAnyAuthority('bank:create-transaction')")
+    public ApiResponse<BankTransactionResponse> startPayment(@RequestBody @Valid CreateBankTransactionRequest request, Authentication authentication) {
+        log.info("authorities {}", authentication.getAuthorities());
         return ApiResponse.success(service.startPayment(request));
     }
 

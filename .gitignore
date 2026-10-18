@@ -34,3 +34,5 @@ build/
 .mvn/
 
 **/src/main/resources/application-dev.yml
+
+**/.env

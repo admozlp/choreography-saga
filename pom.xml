@@ -28,6 +28,7 @@
         <module>common</module>
         <module>eureka</module>
         <module>apigw</module>
+        <module>security-common</module>
     </modules>
     <scm>
         <connection/>

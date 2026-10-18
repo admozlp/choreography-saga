@@ -10,8 +10,27 @@ eureka:
 
 
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: apigw
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/saga
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8181/realms/saga
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: gateway
+            client-secret: ${KC_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            scope: openid,profile,email
+
   cloud:
     gateway:
       server:
@@ -20,13 +39,13 @@ spring:
             - id: order-service
               uri: lb://order-service
               predicates:
-                - Path=/api/orders/**
+                - Path=/api/orders/**,/api/orders
               filters:
                 - StripPrefix=1
             - id: stock-service
               uri: lb://stock-service
               predicates:
-                - Path=/api/stocks/**,/api/reserve-stocks/**,/api/products,/api/products/**
+                - Path=/api/stocks/**,/api/products,/api/products/**
               filters:
                 - StripPrefix=1
             - id: payment-service
@@ -35,10 +54,5 @@ spring:
                 - Path=/api/payments/**
               filters:
                 - StripPrefix=1
-          globalcors:
-            cors-configurations:
-              '[/**]':
-                allowedOriginPatterns: "*"
-                allowedMethods:
-                  - "*"
-                allowedHeaders: "*"
+          default-filters:
+            - TokenRelay=

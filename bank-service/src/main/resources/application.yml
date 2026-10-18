@@ -16,3 +16,8 @@ spring:
       ddl-auto: none
     properties:
       jakarta.persistence.lock.timeout: 3000
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/saga
