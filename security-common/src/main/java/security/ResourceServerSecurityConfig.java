@@ -27,7 +27,6 @@ public class ResourceServerSecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityProps props) {
-        System.out.println("securityFilterChain" + props.publicPaths());
         return http
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/error").permitAll();
