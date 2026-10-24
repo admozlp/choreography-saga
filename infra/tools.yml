@@ -1,0 +1,44 @@
+- hosts: tools
+  become: true
+  tasks:
+    - name: Gerekli paketler kurulu olsun
+      ansible.builtin.apt:
+        name: [ca-certificates, curl]
+        state: present
+        update_cache: true
+
+    - name: Docker'ın imza anahtarı için klasör
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Docker'ın imza anahtarını indir
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: "0644"
+
+    - name: Docker'ın resmi deposunu ekle
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        filename: docker
+        state: present
+
+    - name: Docker ve Compose kurulu olsun
+      ansible.builtin.apt:
+        name: [docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin]
+        state: present
+        update_cache: true
+
+    - name: Docker çalışsın ve açılışta başlasın
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: ubuntu kullanıcısı sudo'suz docker kullanabilsin
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: true
