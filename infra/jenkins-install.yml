@@ -1,0 +1,57 @@
+- hosts: tools
+  become: true
+  vars:
+    jenkins_dir: /opt/jenkins
+  tasks:
+    - name: Jenkins klasörü
+      ansible.builtin.file:
+        path: "{{ jenkins_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: VM'deki docker grubunun numarasını öğren
+      ansible.builtin.getent:
+        database: group
+        key: docker
+
+    - name: Jenkins image'ının tarifi (resmi image + Docker CLI)
+      ansible.builtin.copy:
+        dest: "{{ jenkins_dir }}/Dockerfile"
+        content: |
+          FROM jenkins/jenkins:lts-jdk21
+          USER root
+          RUN apt-get update && apt-get install -y ca-certificates curl \
+           && install -m 0755 -d /etc/apt/keyrings \
+           && curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc \
+           && echo "deb [signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list \
+           && apt-get update && apt-get install -y docker-ce-cli docker-buildx-plugin \
+           && rm -rf /var/lib/apt/lists/*
+          USER jenkins
+
+    - name: Compose dosyası
+      ansible.builtin.copy:
+        dest: "{{ jenkins_dir }}/compose.yml"
+        content: |
+          services:
+            jenkins:
+              build: .
+              container_name: jenkins
+              restart: unless-stopped
+              ports:
+                - "8080:8080"
+              environment:
+                JAVA_OPTS: "-Xmx768m"
+              group_add:
+                - "{{ ansible_facts.getent_group.docker[1] }}"
+              volumes:
+                - jenkins_home:/var/jenkins_home
+                - /var/run/docker.sock:/var/run/docker.sock
+          volumes:
+            jenkins_home:
+
+    - name: Jenkins'i başlat
+      ansible.builtin.command:
+        cmd: docker compose up -d --build
+        chdir: "{{ jenkins_dir }}"
+      register: compose_up
+      changed_when: "'Started' in compose_up.stderr or 'Recreated' in compose_up.stderr"
