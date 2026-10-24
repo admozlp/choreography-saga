@@ -1,0 +1,55 @@
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    cert_dir: "{{ lookup('env', 'HOME') }}/lab-ca"   # Git'in dışında!
+  tasks:
+    - name: Sertifika klasörü (sadece sen okuyabil)
+      ansible.builtin.file:
+        path: "{{ cert_dir }}"
+        state: directory
+        mode: "0700"
+
+    # --- Kendi sertifika otoritemiz (CA) ---
+    - name: CA anahtarı
+      community.crypto.openssl_privatekey:
+        path: "{{ cert_dir }}/ca.key"
+
+    - name: CA imza isteği
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: "{{ cert_dir }}/ca.key"
+        common_name: "Saga Lab CA"
+        basic_constraints: [ "CA:TRUE" ]
+        basic_constraints_critical: true
+        key_usage: [ keyCertSign, cRLSign ]
+        key_usage_critical: true
+      register: ca_csr
+
+    - name: CA sertifikası (10 yıl)
+      community.crypto.x509_certificate:
+        path: "{{ cert_dir }}/ca.crt"
+        csr_content: "{{ ca_csr.csr }}"
+        privatekey_path: "{{ cert_dir }}/ca.key"
+        provider: selfsigned
+        selfsigned_not_after: "+3650d"
+
+    # --- Harbor'ın sertifikası (CA'mızla imzalı) ---
+    - name: Harbor anahtarı
+      community.crypto.openssl_privatekey:
+        path: "{{ cert_dir }}/harbor.key"
+
+    - name: Harbor imza isteği
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: "{{ cert_dir }}/harbor.key"
+        common_name: harbor.internal
+        subject_alt_name: [ "DNS:harbor.internal" ]
+      register: harbor_csr
+
+    - name: Harbor sertifikası
+      community.crypto.x509_certificate:
+        path: "{{ cert_dir }}/harbor.crt"
+        csr_content: "{{ harbor_csr.csr }}"
+        provider: ownca
+        ownca_path: "{{ cert_dir }}/ca.crt"
+        ownca_privatekey_path: "{{ cert_dir }}/ca.key"
+        ownca_not_after: "+825d"

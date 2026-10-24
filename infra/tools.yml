@@ -1,9 +1,9 @@
-- hosts: tools
+- hosts: tools-vm
   become: true
   tasks:
     - name: Gerekli paketler kurulu olsun
       ansible.builtin.apt:
-        name: [ca-certificates, curl]
+        name: [ ca-certificates, curl ]
         state: present
         update_cache: true
 
@@ -27,7 +27,7 @@
 
     - name: Docker ve Compose kurulu olsun
       ansible.builtin.apt:
-        name: [docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin]
+        name: [ docker-ce, docker-ce-cli, containerd.io, docker-buildx-plugin, docker-compose-plugin ]
         state: present
         update_cache: true
 
