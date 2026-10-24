@@ -1,0 +1,57 @@
+- hosts: tools
+  become: true
+  vars:
+    harbor_version: v2.15.2
+    harbor_dir: /opt/harbor
+  tasks:
+    - name: Harbor kurulum paketini indir
+      ansible.builtin.get_url:
+        url: "https://github.com/goharbor/harbor/releases/download/{{ harbor_version }}/harbor-online-installer-{{ harbor_version }}.tgz"
+        dest: "/tmp/harbor-{{ harbor_version }}.tgz"
+
+    - name: Paketi /opt altına aç
+      ansible.builtin.unarchive:
+        src: "/tmp/harbor-{{ harbor_version }}.tgz"
+        dest: /opt
+        remote_src: true
+        creates: "{{ harbor_dir }}/install.sh"
+
+    - name: Sertifika klasörü
+      ansible.builtin.file:
+        path: /etc/harbor/certs
+        state: directory
+        mode: "0700"
+
+    - name: Harbor'ın sertifikasını ve anahtarını kopyala
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/lab-ca/{{ item }}"
+        dest: "/etc/harbor/certs/{{ item }}"
+        mode: "0600"
+      loop: [ harbor.crt, harbor.key ]
+
+    - name: Ayar dosyasını şablondan oluştur (sadece ilk seferde)
+      ansible.builtin.copy:
+        src: "{{ harbor_dir }}/harbor.yml.tmpl"
+        dest: "{{ harbor_dir }}/harbor.yml"
+        remote_src: true
+        force: false
+
+    - name: Ayarları yaz
+      ansible.builtin.lineinfile:
+        path: "{{ harbor_dir }}/harbor.yml"
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - { regexp: '^hostname:', line: 'hostname: harbor.internal' }
+        - { regexp: '^  certificate:', line: '  certificate: /etc/harbor/certs/harbor.crt' }
+        - { regexp: '^  private_key:', line: '  private_key: /etc/harbor/certs/harbor.key' }
+        - { regexp: '^harbor_admin_password:', line: 'harbor_admin_password: {{ vault_harbor_admin_password }}' }
+        - { regexp: '^  password:', line: '  password: {{ vault_harbor_db_password }}' }
+      no_log: true
+      register: harbor_config
+
+    - name: Harbor'ı kur (ayarlar değiştiyse)
+      ansible.builtin.command:
+        cmd: ./install.sh
+        chdir: "{{ harbor_dir }}"
+      when: harbor_config.changed
