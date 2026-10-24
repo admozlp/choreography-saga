@@ -1,4 +1,4 @@
-- hosts: tools-vm
+- hosts: tools
   become: true
   tasks:
     - name: Gerekli paketler kurulu olsun
