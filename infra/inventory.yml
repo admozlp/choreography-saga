@@ -1,0 +1,12 @@
+all:
+  vars:
+    ansible_user: ubuntu
+  children:
+    tools:
+      hosts:
+        tools-vm:
+          ansible_host: 10.97.0.220
+    app:
+      hosts:
+        app-vm:
+          ansible_host: 10.97.0.6
