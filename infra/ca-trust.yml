@@ -1,0 +1,30 @@
+# Bütün VM'ler CA'mıza güvensin (curl, Java gibi araçlar için)
+- hosts: all
+  become: true
+  tasks:
+    - name: CA'yı sistemin güvendiği sertifikalara ekle
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/lab-ca/ca.crt"
+        dest: /usr/local/share/ca-certificates/saga-lab-ca.crt
+        mode: "0644"
+      notify: Sertifika listesini yenile
+
+  handlers:
+    - name: Sertifika listesini yenile
+      ansible.builtin.command: update-ca-certificates
+
+# tools'taki Docker, harbor.internal için CA'mıza güvensin
+- hosts: tools
+  become: true
+  tasks:
+    - name: Docker'ın sertifika klasörü
+      ansible.builtin.file:
+        path: /etc/docker/certs.d/harbor.internal
+        state: directory
+        mode: "0755"
+
+    - name: CA'yı Docker'a tanıt
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/lab-ca/ca.crt"
+        dest: /etc/docker/certs.d/harbor.internal/ca.crt
+        mode: "0644"
