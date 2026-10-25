@@ -38,7 +38,7 @@
               container_name: jenkins
               restart: unless-stopped
               ports:
-                - "8080:8080"
+                - "9880:8080"
               environment:
                 JAVA_OPTS: "-Xmx768m"
               group_add:
