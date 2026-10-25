@@ -21,3 +21,10 @@ spring:
         jwt:
           issuer-uri: http://localhost:8181/realms/saga
 
+
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true

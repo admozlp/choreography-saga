@@ -1,12 +1,11 @@
 server:
   port: 1010
 
-
-eureka:
-  instance:
-    prefer-ip-address: false
-    hostname: localhost
-    instance-id: ${spring.application.name}:${server.port}:${random.int}
+services:
+  order: { url: http://localhost:8081 }
+  stock: { url: http://localhost:8082 }
+  payment: { url: http://localhost:8085 }
+  bank: { url: http://localhost:8084 }
 
 
 spring:
@@ -37,22 +36,28 @@ spring:
         webflux:
           routes:
             - id: order-service
-              uri: lb://order-service
+              uri: ${services.order.url}
               predicates:
                 - Path=/api/orders/**,/api/orders
               filters:
                 - StripPrefix=1
             - id: stock-service
-              uri: lb://stock-service
+              uri: ${services.stock.url}
               predicates:
                 - Path=/api/stocks/**,/api/products,/api/products/**
               filters:
                 - StripPrefix=1
             - id: payment-service
-              uri: lb://payment-service
+              uri: ${services.payment.url}
               predicates:
                 - Path=/api/payments/**
               filters:
                 - StripPrefix=1
           default-filters:
             - TokenRelay=
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true

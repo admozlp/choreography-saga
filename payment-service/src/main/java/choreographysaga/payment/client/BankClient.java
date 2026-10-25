@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient(
         name = "bank-service",
+        url = "${services.bank.url}",
         path = "/bank-transactions",
         configuration = FeignClientConfig.class
 )

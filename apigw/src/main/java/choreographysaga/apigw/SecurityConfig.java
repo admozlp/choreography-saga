@@ -28,7 +28,6 @@ import reactor.core.publisher.Mono;
 
 @Configuration
 public class SecurityConfig {
-    // pipeline test
     @Bean
     SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, ReactiveClientRegistrationRepository clients) {
         var resolver = new DefaultServerOAuth2AuthorizationRequestResolver(clients);
@@ -38,6 +37,7 @@ public class SecurityConfig {
                 .authorizeExchange(ex ->
                         ex.pathMatchers(HttpMethod.POST, "/api/**").permitAll()
                                 .pathMatchers(HttpMethod.GET, "/api/products/{id:\\d+}", "/api/products/images/*").permitAll()
+                                .pathMatchers("/actuator/health/**").permitAll()
                                 .anyExchange().authenticated())
                 .oauth2Login(login -> login.authorizationRequestResolver(resolver))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))

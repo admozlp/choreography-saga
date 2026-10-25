@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
         name = "stock-service",
+        url = "${services.stock.url}",
         path = "/reserve-stocks",
         configuration = FeignClientConfig.class
 )

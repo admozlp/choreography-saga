@@ -30,6 +30,7 @@ public class ResourceServerSecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/error").permitAll();
+                    auth.requestMatchers("/actuator/health/**").permitAll();
                     props.publicPaths().forEach(p -> auth
                             .requestMatchers(HttpMethod.valueOf(p.method()), p.path()).permitAll());
                     auth.anyRequest().authenticated();

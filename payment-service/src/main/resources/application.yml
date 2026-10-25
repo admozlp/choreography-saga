@@ -39,3 +39,8 @@ resilience4j:
           - io.github.resilience4j.circuitbreaker.CallNotPermittedException
 
 
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true

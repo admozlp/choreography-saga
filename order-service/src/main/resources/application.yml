@@ -38,3 +38,10 @@ resilience4j:
 
 server:
   port: 0
+
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
