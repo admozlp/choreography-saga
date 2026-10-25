@@ -1,0 +1,61 @@
+- hosts: app
+  become: true
+  tasks:
+    - name: k3s ayar klasörü
+      ansible.builtin.file:
+        path: /etc/rancher/k3s
+        state: directory
+        mode: "0755"
+
+    - name: k3s ayarları
+      ansible.builtin.copy:
+        dest: /etc/rancher/k3s/config.yaml
+        content: |
+          secrets-encryption: true        # K8s Secret'ları diskte şifreli saklansın
+          write-kubeconfig-mode: "0600"   # bağlantı dosyasını sadece root okuyabilsin
+      notify: k3s'i yeniden başlat
+
+    - name: Harbor'ın CA'sını k3s'e ver
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/lab-ca/ca.crt"
+        dest: /etc/rancher/k3s/harbor-ca.crt
+        mode: "0644"
+
+    - name: k3s, harbor.internal'dan image çekerken bu CA'ya güvensin
+      ansible.builtin.copy:
+        dest: /etc/rancher/k3s/registries.yaml
+        content: |
+          configs:
+            "harbor.internal":
+              tls:
+                ca_file: /etc/rancher/k3s/harbor-ca.crt
+      notify: k3s'i yeniden başlat
+
+    - name: k3s kur
+      ansible.builtin.shell: curl -sfL https://get.k3s.io | sh -
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Bağlantı dosyasını ana makineye kopyala
+      ansible.builtin.fetch:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: "{{ lookup('env', 'HOME') }}/.kube/config"
+        flat: true
+
+    - name: Dosyadaki adresi VM'in IP'si yap ve sadece sen okuyabil
+      delegate_to: localhost
+      become: false
+      block:
+        - ansible.builtin.replace:
+            path: "{{ lookup('env', 'HOME') }}/.kube/config"
+            regexp: 'https://127.0.0.1:6443'
+            replace: "https://{{ ansible_host }}:6443"
+        - ansible.builtin.file:
+            path: "{{ lookup('env', 'HOME') }}/.kube/config"
+            mode: "0600"
+
+  handlers:
+    - name: k3s'i yeniden başlat
+      ansible.builtin.systemd:
+        name: k3s
+        state: restarted
