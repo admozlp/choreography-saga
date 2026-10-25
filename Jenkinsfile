@@ -7,7 +7,6 @@ pipeline {
 
     environment {
         REGISTRY = 'harbor.internal/saga'
-        SERVICES = 'apigw order-service stock-service payment-service bank-service'
     }
 
     stages {
