@@ -28,7 +28,7 @@ import reactor.core.publisher.Mono;
 
 @Configuration
 public class SecurityConfig {
-// pipeline test
+
     @Bean
     SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, ReactiveClientRegistrationRepository clients) {
         var resolver = new DefaultServerOAuth2AuthorizationRequestResolver(clients);
