@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+services:
+  order: { url: http://order-service:8080 }
+  stock: { url: http://stock-service:8080 }
+  payment: { url: http://payment-service:8080 }
+
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}

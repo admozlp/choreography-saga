@@ -1,0 +1,22 @@
+server:
+  port: 8080
+  forward-headers-strategy: framework
+
+services:
+  order:   { url: http://order-service:8080 }
+  stock:   { url: http://stock-service:8080 }
+  payment: { url: http://payment-service:8080 }
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+      client:
+        provider:
+          keycloak:
+            issuer-uri: ${KEYCLOAK_ISSUER_URI}
+        registration:
+          keycloak:
+            client-secret: ${KC_CLIENT_SECRET}

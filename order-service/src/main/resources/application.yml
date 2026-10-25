@@ -12,6 +12,15 @@ spring:
       ddl-auto: none
     properties:
       jakarta.persistence.lock.timeout: 3000
+  security:
+    oauth2:
+      client:
+        registration:
+          service:
+            provider: keycloak
+            client-id: order-service
+            authorization-grant-type: client_credentials
+
 
 resilience4j:
   circuitbreaker:
@@ -35,10 +44,6 @@ resilience4j:
         ignore-exceptions:
           - jakarta.persistence.EntityNotFoundException
           - io.github.resilience4j.circuitbreaker.CallNotPermittedException
-
-server:
-  port: 0
-
 
 management:
   endpoint:

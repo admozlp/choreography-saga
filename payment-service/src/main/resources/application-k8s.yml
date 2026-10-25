@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+services:
+  stock: { url: http://stock-service:8080 }
+  order: { url: http://order-service:8080 }
+  bank: { url: http://bank-service:8080 }
+
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI}
+      client:
+        provider:
+          keycloak:
+            issuer-uri: ${KEYCLOAK_ISSUER_URI}
+        registration:
+          service:
+            client-secret: ${KC_CLIENT_SECRET}
