@@ -1,5 +1,11 @@
 # syntax=docker/dockerfile:1
 
+# ---- Test (sadece Jenkins'in Test adımında çalışır) ----
+FROM maven:3-eclipse-temurin-25 AS test
+WORKDIR /src
+COPY . .
+RUN --mount=type=cache,target=/root/.m2 mvn -B test
+
 # ---- 1. aşama: Derleme (Maven + JDK olan büyük image) ----
 FROM maven:3-eclipse-temurin-25 AS build
 WORKDIR /src
