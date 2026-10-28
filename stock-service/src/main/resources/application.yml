@@ -25,11 +25,14 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
-
 app:
   inbox:
     retention-days: 14
     cleanup-cron: "0 0 3 * * *"
+  kafka:
+    topics:
+      order-events: Order.events
+      payment-events: Payment.events
 
 security:
   public-paths:

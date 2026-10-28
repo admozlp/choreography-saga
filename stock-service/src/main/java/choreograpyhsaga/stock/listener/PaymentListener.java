@@ -42,7 +42,7 @@ public class PaymentListener {
                     EntityNotFoundException.class
             }
     )
-    @KafkaListener(topics = "Payment.events", groupId = "stock-service")
+    @KafkaListener(topics = "${app.kafka.topics.payment-events}", groupId = "${spring.kafka.consumer.group-id}")
     public void onPaymentEvent(@Payload String payload,
                                @Header("eventType") String eventType,
                                @Header("id") String eventId) throws Exception {

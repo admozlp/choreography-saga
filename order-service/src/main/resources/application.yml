@@ -20,6 +20,9 @@ spring:
             provider: keycloak
             client-id: order-service
             authorization-grant-type: client_credentials
+  kafka:
+    consumer:
+      group-id: order-service
 
 
 resilience4j:
@@ -44,6 +47,10 @@ resilience4j:
         ignore-exceptions:
           - jakarta.persistence.EntityNotFoundException
           - io.github.resilience4j.circuitbreaker.CallNotPermittedException
+app:
+  kafka:
+    topics:
+      payment-events: Payment.events
 
 management:
   endpoint:

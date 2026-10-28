@@ -42,7 +42,7 @@ public class OrderListener {
                     EntityNotFoundException.class
             }
     )
-    @KafkaListener(topics = "Order.events", groupId = "stock-service")
+    @KafkaListener(topics = "${app.kafka.topics.order-events}", groupId = "${spring.kafka.consumer.group-id}")
     public void onOrderEvent(@Payload String payload,
                              @Header("eventType") String eventType,
                              @Header("id") String eventId) throws Exception {

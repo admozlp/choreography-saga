@@ -25,3 +25,11 @@ spring:
             client-secret: ${KC_CLIENT_SECRET}
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer:
+      group-id: ${APP_ENV}.stock-service
+
+
+app:
+  kafka:
+    topics:
+      payment-events: ${APP_ENV}.Payment.events
